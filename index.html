@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -548,7 +548,7 @@ it:{title:"Regole del match play", intro:"Regole di base (specifiche) del match 
  ]}
 };
 const LANGS=["de","en","sl","it"];
-let LANG="de";
+let LANG="en";
 try{ const l=localStorage.getItem("sg-lang"); if(LANGS.includes(l)) LANG=l; else { const n=(navigator.language||"").slice(0,2).toLowerCase(); if(LANGS.includes(n)) LANG=n; } }catch(e){}
 function t(k, v){
   let s = (I18N[LANG][k]!==undefined) ? I18N[LANG][k] : I18N.en[k];
