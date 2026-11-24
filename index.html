@@ -173,9 +173,9 @@ body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset
     </div>
     <div class="top-right">
       <div class="langs" role="group" aria-label="Language" id="langs">
+        <button type="button" class="lang" data-lang="de">DE</button>
         <button type="button" class="lang" data-lang="en">EN</button>
         <button type="button" class="lang" data-lang="sl">SL</button>
-        <button type="button" class="lang" data-lang="de">DE</button>
         <button type="button" class="lang" data-lang="it">IT</button>
       </div>
       <div id="mecard"></div>
@@ -547,7 +547,7 @@ it:{title:"Regole del match play", intro:"Regole di base (specifiche) del match 
   ["Concessione",["Un giocatore può concedere in qualsiasi momento il colpo successivo (given) per chiudere la buca.","Un giocatore può concedere una buca in qualsiasi momento dopo il colpo di partenza.","Un giocatore può concedere il MATCH in qualsiasi momento."]]
  ]}
 };
-const LANGS=["en","sl","de","it"];
+const LANGS=["de","en","sl","it"];
 let LANG="en";
 try{ const l=localStorage.getItem("sg-lang"); if(LANGS.includes(l)) LANG=l; else { const n=(navigator.language||"").slice(0,2).toLowerCase(); if(LANGS.includes(n)) LANG=n; } }catch(e){}
 function t(k, v){
