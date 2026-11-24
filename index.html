@@ -658,7 +658,7 @@ async function rpc(fn, args){
   try{
     res = await fetch(CFG.url.replace(/\/+$/,"")+"/rest/v1/rpc/"+fn, {
       method:"POST",
-      headers:{"Content-Type":"application/json","apikey":CFG.key,"Authorization":"Bearer "+CFG.key},
+      headers:Object.assign({"Content-Type":"application/json","apikey":CFG.key}, /^eyJ/.test(CFG.key)?{"Authorization":"Bearer "+CFG.key}:{}),
       body:JSON.stringify(args||{})
     });
   }catch(e){ throw new ApiError("unavailable", t("unavailable")); }
