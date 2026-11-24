@@ -104,10 +104,10 @@ begin
   delete from public.sg_players where id = me.id;
 end $$;
 
--- create or update a challenge; when it becomes "done" with the challenger winning a ladder challenge, the ladder is updated atomically
+-- create or update a challenge; when a ladder challenge becomes "done" and the winner stood below the loser, the ladder is updated atomically
 create or replace function public.sg_save_challenge(p_id text, p_pin text, p_cid text, p_data jsonb) returns void
 language plpgsql security definer set search_path = public, extensions as $$
-declare me public.sg_players := public.sg_check(p_id,p_pin); old jsonb; o jsonb; arr text[]; ci int; di int; ch text; de text;
+declare me public.sg_players := public.sg_check(p_id,p_pin); old jsonb; o jsonb; arr text[]; wi int; li int; ch text; de text; w text; l text;
 begin
   if p_cid !~ '^[a-z0-9]{4,40}$' then raise exception 'id' using errcode = '22023'; end if;
   perform 1 from public.sg_ladder where id = 1 for update;
@@ -131,13 +131,14 @@ begin
       where id <> p_cid and data->>'status' = 'pending'
         and (data->>'challenger' in (ch,de) or data->>'defender' in (ch,de));
   end if;
-  if p_data->>'status' = 'done' and p_data->>'winner' = ch and coalesce(p_data->>'kind','ladder') = 'ladder' then
+  w := p_data->>'winner'; l := case when w = ch then de when w = de then ch end;
+  if p_data->>'status' = 'done' and l is not null and coalesce(p_data->>'kind','ladder') = 'ladder' then
     select ord into o from public.sg_ladder where id = 1;
     select array_agg(x order by n) into arr from jsonb_array_elements_text(o) with ordinality t(x,n);
-    ci := array_position(arr, ch); di := array_position(arr, de);
-    if ci is not null and di is not null and ci > di then
-      arr := array_remove(arr, ch);
-      arr := arr[1:di-1] || ch || arr[di:];
+    wi := array_position(arr, w); li := array_position(arr, l);
+    if wi is not null and li is not null and wi > li then
+      arr := array_remove(arr, w);
+      arr := arr[1:li-1] || w || arr[li:];
       update public.sg_ladder set ord = to_jsonb(arr) where id = 1;
     end if;
   end if;
