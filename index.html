@@ -17,6 +17,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
 <script src="config.js"></script>
+<script src="clubs.js" defer></script>
+<script src="club-picker.js" defer></script>
 <style>
 /* Layout: an app shell. Header with wordmark and "you" card, tab bar, one working column (ladder rows like a scorecard). */
 :root{
@@ -236,7 +238,7 @@ en:{
   tag:"Open matchplay ladder · Season {s}", regTitle:"Join the ladder",
   regIntro:"New players start at the bottom of the ladder. From there you challenge players one or two places above you and climb by winning.",
   fName:"Full name", fClub:"Home club", fHcp:"Handicap (HCP)", fContact:"Contact for arranging matches", fHcpShort:"Handicap", fContactShort:"Contact",
-  phClub:"e.g. GK Bled", phHcp:"e.g. 14.2", phContact:"phone or email", join:"Join",
+  phClub:"Search or type your club", phHcp:"e.g. 14.2", phContact:"phone or email", join:"Join",
   contactNote:"Only registered players see your contact, so you can arrange a tee time.",
   busyLadder:"Someone else is updating the ladder right now. Try again in a few seconds.",
   genericErr:"Something went wrong.", noPerm:"You don't have permission to change the competition. The organiser needs to give you edit access.",
@@ -304,7 +306,7 @@ sl:{
   tag:"Odprta matchplay lestvica · Sezona {s}", regTitle:"Prijava na lestvico",
   regIntro:"Novi igralci začnejo na dnu lestvice. Od tam izzivaš igralce eno ali dve mesti nad sabo in se z zmagami vzpenjaš.",
   fName:"Ime in priimek", fClub:"Matični klub", fHcp:"Hendikep (HCP)", fContact:"Kontakt za dogovor", fHcpShort:"Hendikep", fContactShort:"Kontakt",
-  phClub:"npr. GK Bled", phHcp:"npr. 14,2", phContact:"telefon ali e-pošta", join:"Prijavi me",
+  phClub:"Poiščite ali vpišite klub", phHcp:"npr. 14,2", phContact:"telefon ali e-pošta", join:"Prijavi me",
   contactNote:"Kontakt vidijo samo prijavljeni igralci, da se lahko dogovorite za termin.",
   busyLadder:"Lestvico prav zdaj posodablja nekdo drug. Poskusi znova čez nekaj sekund.",
   genericErr:"Nekaj je šlo narobe.", noPerm:"Nimaš pravice spreminjati tekmovanja. Organizator ti mora dati dostop za urejanje.",
@@ -372,7 +374,7 @@ de:{
   tag:"Offene Matchplay-Leiter · Saison {s}", regTitle:"Bei der Leiter anmelden",
   regIntro:"Neue Spieler starten unten auf der Leiter. Von dort forderst du Spieler heraus, die ein oder zwei Plätze über dir stehen, und steigst mit Siegen auf.",
   fName:"Vor- und Nachname", fClub:"Heimatclub", fHcp:"Handicap (HCP)", fContact:"Kontakt für Terminabsprachen", fHcpShort:"Handicap", fContactShort:"Kontakt",
-  phClub:"z. B. GK Bled", phHcp:"z. B. 14,2", phContact:"Telefon oder E-Mail", join:"Anmelden",
+  phClub:"Club suchen oder eintippen", phHcp:"z. B. 14,2", phContact:"Telefon oder E-Mail", join:"Anmelden",
   contactNote:"Deinen Kontakt sehen nur angemeldete Spieler, damit ihr einen Termin vereinbaren könnt.",
   busyLadder:"Gerade aktualisiert jemand anderes die Leiter. Versuche es in ein paar Sekunden erneut.",
   genericErr:"Etwas ist schiefgelaufen.", noPerm:"Du darfst den Wettbewerb nicht ändern. Der Organisator muss dir Bearbeitungsrechte geben.",
@@ -440,7 +442,7 @@ it:{
   tag:"Classifica matchplay aperta · Stagione {s}", regTitle:"Iscriviti alla classifica",
   regIntro:"I nuovi giocatori partono dal fondo della classifica. Da lì sfidi i giocatori una o due posizioni sopra di te e sali vincendo.",
   fName:"Nome e cognome", fClub:"Circolo di appartenenza", fHcp:"Handicap (HCP)", fContact:"Contatto per accordarsi", fHcpShort:"Handicap", fContactShort:"Contatto",
-  phClub:"es. GK Bled", phHcp:"es. 14,2", phContact:"telefono o e-mail", join:"Iscriviti",
+  phClub:"Cerca o scrivi il circolo", phHcp:"es. 14,2", phContact:"telefono o e-mail", join:"Iscriviti",
   contactNote:"Il tuo contatto è visibile solo ai giocatori iscritti, così potete fissare un orario di partenza.",
   busyLadder:"Qualcun altro sta aggiornando la classifica. Riprova tra qualche secondo.",
   genericErr:"Qualcosa è andato storto.", noPerm:"Non hai il permesso di modificare la competizione. L'organizzatore deve darti l'accesso in modifica.",
