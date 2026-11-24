@@ -7,7 +7,8 @@
 <meta name="description" content="Smash Golf: open matchplay ladder">
 <meta name="theme-color" content="#1d6a43">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -49,8 +50,8 @@ button,input,select{font:inherit;color:inherit}
 /* header */
 .top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between}
 .brand{display:flex;flex-direction:column;gap:2px}
-.wordmark{font-family:var(--f-display);font-weight:800;font-size:clamp(34px,7vw,52px);line-height:.9;letter-spacing:-.035em;text-transform:uppercase}
-.wordmark em{font-style:normal;color:var(--flag)}
+.logo-h{margin:0;line-height:0}
+.logo{display:block;height:clamp(52px,11vw,76px);width:auto;max-width:100%}
 .tag{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .top-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;min-width:0}
 .langs{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
@@ -163,7 +164,7 @@ body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <div class="wordmark">Smash <em>Golf</em></div>
+      <h1 class="logo-h"><img class="logo" src="icons/logo.svg" alt="Smash Golf" width="1398" height="360"></h1>
       <div class="tag" id="tagline"></div>
     </div>
     <div class="top-right">
