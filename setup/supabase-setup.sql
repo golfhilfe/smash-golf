@@ -9,6 +9,7 @@ create table if not exists public.sg_players(
   is_admin boolean not null default false,
   created_at timestamptz not null default now()
 );
+alter table public.sg_players add column if not exists reset_asked timestamptz;
 create unique index if not exists sg_players_name_uq on public.sg_players(lower(name));
 create table if not exists public.sg_challenges(
   id text primary key,
@@ -49,7 +50,9 @@ begin
     ok := me.id is not null and me.pin_hash = crypt(coalesce(p_pin,''), me.pin_hash);
   end if;
   select coalesce(jsonb_object_agg(id,
-           (case when ok then data else data - 'contact' end) || jsonb_build_object('name',name,'admin',is_admin)), '{}'::jsonb)
+           (case when ok then data else data - 'contact' end) || jsonb_build_object('name',name,'admin',is_admin)
+           || case when ok and me.is_admin and reset_asked is not null
+                then jsonb_build_object('resetAsked',(extract(epoch from reset_asked)*1000)::bigint) else '{}'::jsonb end), '{}'::jsonb)
     into pl from public.sg_players;
   select coalesce(jsonb_object_agg(id, data || jsonb_build_object('id',id)), '{}'::jsonb) into ch from public.sg_challenges;
   select ord into o from public.sg_ladder where id = 1;
@@ -82,6 +85,7 @@ begin
     perform pg_sleep(1);
     raise exception 'auth' using errcode = '28000';
   end if;
+  if r.reset_asked is not null then update public.sg_players set reset_asked = null where id = r.id; end if;
   return jsonb_build_object('id',r.id);
 end $$;
 
@@ -150,10 +154,18 @@ declare me public.sg_players := public.sg_check(p_id,p_pin);
 begin
   if not me.is_admin then raise exception 'forbidden' using errcode = '42501'; end if;
   if p_new !~ '^[0-9]{4,8}$' then raise exception 'pin' using errcode = '22023'; end if;
-  update public.sg_players set pin_hash = crypt(p_new, gen_salt('bf')) where id = p_target;
+  update public.sg_players set pin_hash = crypt(p_new, gen_salt('bf')), reset_asked = null where id = p_target;
+end $$;
+
+-- "Forgot PIN?": anyone can flag a player as needing a new PIN; only the organiser sees the flag and can reset it
+create or replace function public.sg_request_reset(p_id text) returns void
+language plpgsql security definer set search_path = public, extensions as $$
+begin
+  update public.sg_players set reset_asked = now()
+    where id = p_id and (reset_asked is null or reset_asked < now() - interval '10 minutes');
 end $$;
 
 grant execute on function public.sg_state(text,text), public.sg_register(text,text,jsonb), public.sg_login(text,text),
   public.sg_save_profile(text,text,jsonb), public.sg_leave(text,text), public.sg_save_challenge(text,text,text,jsonb),
-  public.sg_reset_pin(text,text,text,text) to anon, authenticated;
+  public.sg_reset_pin(text,text,text,text), public.sg_request_reset(text) to anon, authenticated;
 notify pgrst, 'reload schema';
