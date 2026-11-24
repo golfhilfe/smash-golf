@@ -1,0 +1,1121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Smash Golf</title>
+<meta name="description" content="Smash Golf: open matchplay ladder">
+<meta name="theme-color" content="#1d6a43">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Smash Golf">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<script src="config.js"></script>
+<style>
+/* Layout: an app shell. Header with wordmark and "you" card, tab bar, one working column (ladder rows like a scorecard). */
+:root{
+  --bg:#eef2ea; --surface:#ffffff; --surface-2:#f6f8f3; --ink:#11261b; --muted:#5a6d61; --line:#d6dfd2;
+  --fairway:#1d6a43; --fairway-ink:#ffffff; --flag:#d2442c; --sand:#efe3c2; --sand-ink:#6b5a24;
+  --ok:#1d7a4a; --warn:#a86a00; --bad:#b3341f;
+  --f-display:"Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --f-body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1510; --surface:#132019; --surface-2:#18281f; --ink:#e6efe8; --muted:#90a497; --line:#24372b;
+  --fairway:#4fbf83; --fairway-ink:#08140d; --flag:#ff6a50; --sand:#3a321c; --sand-ink:#e8d39a;
+  --ok:#5fd39a; --warn:#f0b54a; --bad:#ff7a63; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0c1510; --surface:#132019; --surface-2:#18281f; --ink:#e6efe8; --muted:#90a497; --line:#24372b;
+  --fairway:#4fbf83; --fairway-ink:#08140d; --flag:#ff6a50; --sand:#3a321c; --sand-ink:#e8d39a;
+  --ok:#5fd39a; --warn:#f0b54a; --bad:#ff7a63; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--flag);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between}
+.brand{display:flex;flex-direction:column;gap:2px}
+.wordmark{font-family:var(--f-display);font-weight:800;font-size:clamp(34px,7vw,52px);line-height:.9;letter-spacing:-.035em;text-transform:uppercase}
+.wordmark em{font-style:normal;color:var(--flag)}
+.tag{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.top-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;min-width:0}
+.langs{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.lang{border:0;background:transparent;padding:5px 10px;font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--muted);cursor:pointer}
+.lang[aria-pressed="true"]{background:var(--fairway);color:var(--fairway-ink)}
+@media (max-width:520px){.top-right{align-items:flex-start}}
+.mecard{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px;min-width:0}
+.mecard .pos{font-family:var(--f-mono);font-weight:700;font-size:26px;color:var(--fairway);line-height:1}
+.mecard .nm{font-weight:600;overflow-wrap:anywhere}
+
+/* demo banner */
+.banner{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;background:var(--sand);color:var(--sand-ink);border-radius:var(--r);padding:10px 14px;font-size:14px}
+.banner b{font-weight:600}
+.banner select{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 6px;max-width:100%}
+.banner .sp{flex:1}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{background:none;border:0;padding:10px 14px;cursor:pointer;color:var(--muted);font-weight:600;border-bottom:3px solid transparent;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--flag)}
+.tab .cnt{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:10px;background:var(--flag);color:#fff;font-size:12px;line-height:20px;text-align:center}
+
+/* buttons */
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 14px;font-weight:600;cursor:pointer;font-size:14px;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--fairway);border-color:var(--fairway);color:var(--fairway-ink)}
+.btn.flag{background:var(--flag);border-color:var(--flag);color:#fff}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row-actions{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ladder */
+.ladder{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.rung{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
+.rung:first-child{border-top:0}
+.rung .n{font-family:var(--f-mono);font-weight:700;font-size:22px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.rung:nth-child(-n+3) .n{color:var(--fairway)}
+.rung.me{background:var(--surface-2);box-shadow:inset 4px 0 0 var(--flag)}
+.rung.reach{background:color-mix(in srgb,var(--sand) 55%,var(--surface))}
+.who{min-width:0;display:flex;flex-direction:column;gap:2px}
+.who .nm{font-weight:600;overflow-wrap:anywhere}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.chip.busy{color:var(--warn)} .chip.reach{color:var(--sand-ink);border-color:transparent;background:var(--sand)} .chip.you{color:var(--flag)}
+.chip.ok{color:var(--ok)} .chip.bad{color:var(--bad)} .chip.mut{color:var(--muted)}
+.right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+@media (max-width:520px){.rung{grid-template-columns:40px minmax(0,1fr)}.rung .n{font-size:18px}.right{grid-column:2;align-items:flex-start;flex-direction:row;flex-wrap:wrap}}
+
+/* cards */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card h2{font-size:20px}
+.card h3{font-size:16px}
+.section{display:flex;flex-direction:column;gap:12px}
+.section > h2{font-size:22px}
+.empty{padding:28px 16px;text-align:center;color:var(--muted)}
+.duel{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center}
+.duel .side{min-width:0;display:flex;flex-direction:column;gap:2px}
+.duel .side.r{text-align:right;align-items:flex-end}
+.duel .vs{font-family:var(--f-display);font-weight:800;color:var(--flag);font-size:18px}
+.duel .nm{font-weight:600;overflow-wrap:anywhere}
+.status-line{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:10px}
+.res{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:12px 14px;border-top:1px solid var(--line)}
+.res:first-child{border-top:0}
+.res .score{font-family:var(--f-mono);font-weight:700;color:var(--fairway);text-align:right}
+.score-big{font-weight:700;font-size:18px;color:var(--fairway)}
+.pts{color:var(--fairway);font-weight:700}
+.mp-head{display:flex;flex-wrap:wrap;gap:10px 16px;justify-content:space-between;align-items:flex-start}
+.mp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px;align-items:start}
+.mp-sec{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface-2);min-width:0;display:flex;flex-direction:column;gap:6px}
+.mp-sec h3{display:flex;gap:8px;align-items:baseline;font-size:16px}
+.mp-n{color:var(--flag);font-weight:700}
+.mp-sec ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.mp-note{margin:4px 0 0;font-weight:700;color:var(--bad)}
+.move-up{color:var(--ok);font-weight:600}
+
+/* forms */
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.field input,.field select{border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:9px 10px;width:100%}
+.err{color:var(--bad);font-size:14px}
+
+/* rules */
+.rules{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;max-width:68ch}
+.rules li::marker{font-family:var(--f-mono);color:var(--flag);font-weight:700}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(5,12,8,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.modal{background:var(--surface);color:var(--ink);border-radius:14px;max-width:480px;width:100%;padding:20px;display:flex;flex-direction:column;gap:14px;max-height:90vh;overflow:auto}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;z-index:60;max-width:calc(100% - 32px)}
+.status{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.rung{transition:background .2s}}
+html,body{margin:0;-webkit-text-size-adjust:100%}
+body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);min-height:100vh}
+.seg{display:inline-flex;align-self:flex-start;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface-2);max-width:100%}
+.segb{border:0;background:transparent;padding:8px 14px;font-weight:600;cursor:pointer;color:var(--muted)}
+.segb[aria-selected="true"]{background:var(--fairway);color:var(--fairway-ink)}
+.field select{border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:9px 10px;width:100%}
+.field input,.field select{font-size:16px}
+.install{border-color:var(--fairway)}
+.install-head{display:flex;gap:12px;align-items:center}
+.install-head img{border-radius:10px}
+.btn,.tab,.lang,.segb{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn{min-height:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="wordmark">Smash <em>Golf</em></div>
+      <div class="tag" id="tagline"></div>
+    </div>
+    <div class="top-right">
+      <div class="langs" role="group" aria-label="Language" id="langs">
+        <button type="button" class="lang" data-lang="en">EN</button>
+        <button type="button" class="lang" data-lang="sl">SL</button>
+        <button type="button" class="lang" data-lang="de">DE</button>
+        <button type="button" class="lang" data-lang="it">IT</button>
+      </div>
+      <div id="mecard"></div>
+    </div>
+  </header>
+
+  <div id="banner"></div>
+  <div id="status" class="status" hidden></div>
+  <section id="install" class="card install" hidden>
+    <div class="install-head"><img src="icons/icon-192.png" alt="" width="40" height="40"><h3 data-i18n="installTitle"></h3></div>
+    <p class="small" style="margin:0" id="install-text"></p>
+    <div class="row-actions"><button class="btn primary" type="button" id="install-btn" hidden data-i18n="installBtn"></button><button class="btn ghost" type="button" id="install-hide" data-i18n="hide"></button></div>
+  </section>
+
+  <section id="reg" class="card" hidden>
+    <div class="seg" role="tablist">
+      <button type="button" class="segb" id="seg-join" data-i18n="tabJoin"></button>
+      <button type="button" class="segb" id="seg-in" data-i18n="tabSignIn"></button>
+    </div>
+    <div id="pane-join" class="section">
+      <h2 data-i18n="regTitle"></h2>
+      <p class="muted" style="margin:0" data-i18n="regIntro"></p>
+      <form id="regform" class="form" autocomplete="off">
+        <div class="field"><label for="r-name" data-i18n="fName"></label><input id="r-name" required maxlength="60" autocomplete="name"></div>
+        <div class="field"><label for="r-pin" data-i18n="fPin"></label><input id="r-pin" required inputmode="numeric" pattern="[0-9]*" maxlength="8" type="password" autocomplete="new-password"></div>
+        <div class="field"><label for="r-club" data-i18n="fClub"></label><input id="r-club" maxlength="60" data-i18n-ph="phClub"></div>
+        <div class="field"><label for="r-hcp" data-i18n="fHcp"></label><input id="r-hcp" inputmode="decimal" maxlength="5" data-i18n-ph="phHcp"></div>
+        <div class="field"><label for="r-contact" data-i18n="fContact"></label><input id="r-contact" maxlength="80" data-i18n-ph="phContact"></div>
+        <p class="small muted" style="grid-column:1/-1;margin:0"><span data-i18n="pinNote"></span> <span data-i18n="contactNote"></span></p>
+        <div class="row-actions" style="grid-column:1/-1"><button class="btn primary" type="submit" id="r-submit" data-i18n="join"></button></div>
+        <div id="r-err" class="err" hidden style="grid-column:1/-1"></div>
+      </form>
+    </div>
+    <div id="pane-in" class="section" hidden>
+      <h2 data-i18n="tabSignIn"></h2>
+      <p class="muted" style="margin:0" data-i18n="signInIntro"></p>
+      <form id="inform" class="form" autocomplete="off">
+        <div class="field"><label for="i-name" data-i18n="fName"></label><select id="i-name" required></select></div>
+        <div class="field"><label for="i-pin" data-i18n="fPin"></label><input id="i-pin" required inputmode="numeric" pattern="[0-9]*" maxlength="8" type="password" autocomplete="current-password"></div>
+        <div class="row-actions" style="grid-column:1/-1;align-items:center"><button class="btn primary" type="submit" id="i-submit" data-i18n="signInBtn"></button><span class="small muted" data-i18n="forgotPin"></span></div>
+        <div id="i-err" class="err" hidden style="grid-column:1/-1"></div>
+      </form>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <main id="view"></main>
+</div>
+<div id="modal-root"></div>
+
+<script>
+(function(){
+"use strict";
+// ---------- translations (EN / SL / DE / IT) ----------
+const SL_DAYS=d=>d===1?"dan":d===2?"dneva":"dni";
+const I18N={
+en:{
+  tag:"Open matchplay ladder · Season {s}", regTitle:"Join the ladder",
+  regIntro:"New players start at the bottom of the ladder. From there you challenge players one or two places above you and climb by winning.",
+  fName:"Full name", fClub:"Home club", fHcp:"Handicap (HCP)", fContact:"Contact for arranging matches", fHcpShort:"Handicap", fContactShort:"Contact",
+  phClub:"e.g. GK Bled", phHcp:"e.g. 14.2", phContact:"phone or email", join:"Join",
+  contactNote:"Only registered players see your contact, so you can arrange a tee time.",
+  busyLadder:"Someone else is updating the ladder right now. Try again in a few seconds.",
+  genericErr:"Something went wrong.", noPerm:"You don't have permission to change the competition. The organiser needs to give you edit access.",
+  unavailable:"The server can't be reached right now. Try again.", quota:"The competition database is full. Let the organiser know.",
+  enterName:"Enter your full name.", cantChallenge:"You can't challenge this player right now.",
+  noPermJoin:"You don't have permission to join. The organiser needs to share the app with you with edit access.", joinFailed:"Joining failed.",
+  signIn:"Sign in to your account to take part in the real competition.", slow:"The connection is slow. The data may not be up to date.",
+  loadErr:"The data could not be loaded ({c}). Refresh the page later.", welcome:"Welcome to the ladder!",
+  cancel:"Cancel", close:"Close", save:"Save",
+  iWon:"I won", oppWon:"{n} won", winner:"Winner", result:"Result", confirmNote:"Your opponent must confirm the result before the ladder updates.",
+  enterResultTitle:"Enter match result", resultSent:"Result sent for confirmation.", sendResult:"Send result",
+  myProfile:"My profile", profileSaved:"Profile saved.", leaveTitle:"Leave the ladder",
+  leaveText:"You will be removed from the ladder and your open challenges will be cancelled. If you join again, you start at the bottom.",
+  leave:"Leave", leftMsg:"You have left the ladder.",
+  tLadder:"Ladder", tChallenges:"Challenges", tPoints:"Points", tResults:"Results", tRules:"Rules",
+  playAs:"Play as:", testMode:"Test mode", testModeDesc:" with sample players. Nothing is saved.", backReal:"Back to the real ladder",
+  realAvailable:"The real competition is available in the published app.", tryFirst:"Want to try out how challenges work first?",
+  editProfile:"Edit profile", meStats:(p,w,l)=>`${p} pts · ${w} ${w===1?"win":"wins"} · ${l} ${l===1?"loss":"losses"}`,
+  loading:"Loading the ladder…", emptyTitle:"The ladder is still empty",
+  emptyText:"The first player to join takes 1st place. Join above, then send the app link to your fellow golfers.",
+  inMatch:"In a match", hasOpen:"Has an open challenge", challengeTitle:"Challenge {n}",
+  challengeText:"You are challenging the player in {pos} place. If you win, you take their place, and they and anyone in between move down one place. Your opponent has {d} days to accept.",
+  sendChallenge:"Send challenge", challengeSent:"Challenge sent.", challengeBtn:"Challenge",
+  meBusyTip:"You already have an open challenge", busyTip:"This player is busy",
+  pmTitle:"Points match against {n}",
+  pmText:(pos,w,l)=>`This is a points match against the player in ${pos} place. The ladder does not change. If you win, you get ${w} ${w===1?"point":"points"}; if they win, they get ${l}. They can decline without penalty.`,
+  sendInvite:"Send invitation", inviteSent:"Points match invitation sent.", pmBtn:"Points match +{w}",
+  you:"You", inRange:"In range · win {p} pts", pts:"{p} pts", place:"{pos} place",
+  challenger:"Challenger", defender:"Defender",
+  stPending:"Waiting for acceptance", stAccepted:"Arrange and play", stReported:"Waiting for result confirmation", pointsMatch:"Points match",
+  daysLeft:d=>`${d} ${d===1?"day":"days"} left to accept`, acceptPassed:"Deadline to accept has passed",
+  acceptedMsg:"Challenge accepted. Arrange a tee time with your opponent.", accept:"Accept",
+  declineTitle:"Decline challenge", declineText:"Declining counts as conceding: the challenger takes your place and gets the points.",
+  declineConcede:"Decline and concede", declined:"Challenge declined.", decline:"Decline", pmDeclined:"Points match declined.",
+  woTitle:"Win by walkover", woText:"Your opponent did not accept in time, so you win without playing and take their place.",
+  confirmWin:"Confirm win", woRecorded:"Walkover win recorded.", claimWo:"Claim walkover win",
+  wdTitle:"Withdraw challenge", wdText:"The challenge will be withdrawn with no effect on the ladder.", wdDone:"Challenge withdrawn.", withdraw:"Withdraw",
+  playBy:"Play by {d}", playPassed:"Deadline to play has passed", enterResult:"Enter result",
+  enteredBy:"Entered by {r}: {w} won, {s}", confirmed:"Result confirmed.", confirmResult:"Confirm result",
+  disputed:"Result disputed. Enter it again.", wrongResult:"Result is wrong", contact:"Contact: ",
+  orgTitle:"Cancel challenge", orgText:"As the organiser you can cancel this challenge. The ladder stays unchanged.", orgCancelled:"Challenge cancelled.", orgBtn:"Cancel (organiser)",
+  myMatches:"My matches", joinToChallenge:"Join the ladder to start challenging.", atTop:"You are at the top of the ladder. Defend your place against challengers.",
+  canChallenge:"You have no open matches. You can challenge {n}. Send a challenge from the Ladder tab.", or:" or ",
+  otherMatches:"Other open matches", noOther:"No other open matches right now.",
+  noResults:"No matches played yet. Confirmed results appear here.", defConceded:"Defender conceded", defNoAccept:"Defender did not accept in time",
+  beat:"{w} beat {l}", pmUnchanged:"Points match · ladder unchanged", movedUp:"↑ challenger from {a} to {b}", defKeeps:"Defender keeps the place",
+  noPlayers:"No players yet. Points appear here after the first match.", ladderPos:"Ladder: {p}",
+  pointsLegend:"Points for a win: 3, plus 1 for every place your opponent is above you (beating someone 5 places above gives 8). Beating someone below you gives 3. A loss gives 0.",
+  sample:" (sample)", rulesTitle:"Smash Golf ladder rules",
+  rules:[
+    "The competition is open to all active golfers and runs for the whole season. New players join at the bottom of the ladder.",
+    "Matches are 18-hole matchplay. You and your opponent agree on the course and tee time. If all square, play continues until a hole is won.",
+    "A ladder challenge, which can change positions, can only go to a player one or two places above you.",
+    "Each player can have only one open match at a time. A player already in a match or with an open challenge cannot be challenged.",
+    "The challenged player must accept within {a} days. Declining counts as conceding. If there is no answer in time, the challenger can claim a walkover win.",
+    "An accepted match must be played within {p} days.",
+    "One player enters the result and the other confirms it. The ladder updates only after confirmation.",
+    "Points: every win earns 3 points plus 1 for each place your opponent is above you, so beating a player 5 places above gives 8. Beating a player below you gives 3. A loss gives 0. Walkovers and concessions count as wins.",
+    "You can challenge any other player to a points match, above or below you. It earns points but does not change the ladder, and the invited player can decline without penalty.",
+    "If the challenger wins, they take the loser's place. The loser and any players in between move down one place. If the defender wins, the ladder stays the same.",
+    "The organiser can cancel a disputed challenge. A player can leave at any time and starts at the bottom if they rejoin."],
+  sc_x19:"At the 19th", sc_x20:"At the 20th", sc_x21:"At the 21st", sc_conceded:"Conceded", sc_walkover:"Walkover", tabJoin:"New player", tabSignIn:"I already joined", fPin:"PIN (4 digits)", pinNote:"Pick a 4-digit PIN. You sign in with your name and PIN on any phone.", signInIntro:"Choose your name and enter your PIN.", signInBtn:"Sign in", pickName:"Choose your name", wrongPin:"Name or PIN is wrong.", badPin:"The PIN must be 4 to 8 digits.", nameTaken:"That name is already on the ladder. If it's you, sign in instead.", signOut:"Sign out", signedOut:"Signed out.", welcomeBack:"Welcome back!", forgotPin:"Forgot your PIN? The organiser can reset it.", installTitle:"Install Smash Golf on your phone", installIos:"iPhone: tap the Share button, then “Add to Home Screen”.", installAndroid:"Android: open the browser menu ⋮ and tap “Install app” or “Add to Home screen”.", installBtn:"Install", hide:"Hide", notConfigured:"The app isn't connected to its database yet. You can try Test mode in the meantime.", resetPin:"Reset a player's PIN", newPin:"New PIN", player:"Player", pinReset:"PIN changed. Tell the player their new PIN.", organiser:"Organiser"
+},
+sl:{
+  tag:"Odprta matchplay lestvica · Sezona {s}", regTitle:"Prijava na lestvico",
+  regIntro:"Novi igralci začnejo na dnu lestvice. Od tam izzivaš igralce eno ali dve mesti nad sabo in se z zmagami vzpenjaš.",
+  fName:"Ime in priimek", fClub:"Matični klub", fHcp:"Hendikep (HCP)", fContact:"Kontakt za dogovor", fHcpShort:"Hendikep", fContactShort:"Kontakt",
+  phClub:"npr. GK Bled", phHcp:"npr. 14,2", phContact:"telefon ali e-pošta", join:"Prijavi me",
+  contactNote:"Kontakt vidijo samo prijavljeni igralci, da se lahko dogovorite za termin.",
+  busyLadder:"Lestvico prav zdaj posodablja nekdo drug. Poskusi znova čez nekaj sekund.",
+  genericErr:"Nekaj je šlo narobe.", noPerm:"Nimaš pravice spreminjati tekmovanja. Organizator ti mora dati dostop za urejanje.",
+  unavailable:"Strežnik trenutno ni dosegljiv. Poskusi znova.", quota:"Baza tekmovanja je polna. Obvesti organizatorja.",
+  enterName:"Vpiši ime in priimek.", cantChallenge:"Tega igralca trenutno ne moreš izzvati.",
+  noPermJoin:"Nimaš pravice za prijavo. Organizator ti mora deliti aplikacijo z dostopom za urejanje.", joinFailed:"Prijava ni uspela.",
+  signIn:"Za sodelovanje v pravem tekmovanju se prijavi v svoj račun.", slow:"Povezava je počasna. Podatki morda niso najnovejši.",
+  loadErr:"Podatkov ni mogoče naložiti ({c}). Osveži stran kasneje.", welcome:"Dobrodošel na lestvici!",
+  cancel:"Prekliči", close:"Zapri", save:"Shrani",
+  iWon:"Zmagal sem jaz", oppWon:"Zmagal je {n}", winner:"Zmagovalec", result:"Rezultat", confirmNote:"Nasprotnik mora rezultat potrditi, šele nato se lestvica posodobi.",
+  enterResultTitle:"Vpiši rezultat dvoboja", resultSent:"Rezultat poslan v potrditev.", sendResult:"Pošlji rezultat",
+  myProfile:"Moj profil", profileSaved:"Profil shranjen.", leaveTitle:"Izstop iz lestvice",
+  leaveText:"Odstranjen boš z lestvice, odprti izzivi bodo preklicani. Ob ponovni prijavi začneš na dnu.",
+  leave:"Izstopi", leftMsg:"Izstopil si iz lestvice.",
+  tLadder:"Lestvica", tChallenges:"Izzivi", tPoints:"Točke", tResults:"Rezultati", tRules:"Pravila",
+  playAs:"Igraj kot:", testMode:"Preizkusni način", testModeDesc:" z vzorčnimi igralci. Nič se ne shrani.", backReal:"Nazaj na pravo lestvico",
+  realAvailable:"Pravo tekmovanje je na voljo v objavljeni aplikaciji.", tryFirst:"Želiš najprej preizkusiti, kako potekajo izzivi?",
+  editProfile:"Uredi profil", meStats:(p,w,l)=>`${p} t. · ${w} zmag · ${l} porazov`,
+  loading:"Nalagam lestvico …", emptyTitle:"Lestvica je še prazna",
+  emptyText:"Prvi prijavljeni igralec zasede 1. mesto. Prijavi se zgoraj, nato pošlji povezavo do aplikacije soigralcem.",
+  inMatch:"V dvoboju", hasOpen:"Ima odprt izziv", challengeTitle:"Izziv za {n}",
+  challengeText:"Izzivaš igralca na {pos} mestu. Če zmagaš, prevzameš njegovo mesto, on in vsi vmes se pomaknejo eno mesto nižje. Nasprotnik ima {d} dni, da izziv sprejme.",
+  sendChallenge:"Pošlji izziv", challengeSent:"Izziv poslan.", challengeBtn:"Izzovi",
+  meBusyTip:"Že imaš odprt izziv", busyTip:"Igralec je zaseden",
+  pmTitle:"Dvoboj za točke: {n}",
+  pmText:(pos,w,l)=>`To je dvoboj za točke proti igralcu na ${pos} mestu. Lestvica se ne spremeni. Če zmagaš, dobiš ${w} t.; če zmaga on, dobi ${l} t. Povabilo lahko zavrne brez posledic.`,
+  sendInvite:"Pošlji povabilo", inviteSent:"Povabilo na dvoboj za točke poslano.", pmBtn:"Dvoboj za točke +{w}",
+  you:"Ti", inRange:"V dosegu · zmaga {p} t.", pts:"{p} t.", place:"{pos} mesto",
+  challenger:"Izzivalec", defender:"Branilec",
+  stPending:"Čaka na sprejem", stAccepted:"Dogovor in igra", stReported:"Čaka na potrditev rezultata", pointsMatch:"Dvoboj za točke",
+  daysLeft:d=>`Rok za sprejem: še ${d} ${SL_DAYS(d)}`, acceptPassed:"Rok za sprejem je potekel",
+  acceptedMsg:"Izziv sprejet. Dogovorita se za termin.", accept:"Sprejmi",
+  declineTitle:"Zavrni izziv", declineText:"Zavrnitev izziva šteje kot predaja: izzivalec prevzame tvoje mesto in dobi točke.",
+  declineConcede:"Zavrni in predaj", declined:"Izziv zavrnjen.", decline:"Zavrni", pmDeclined:"Dvoboj za točke zavrnjen.",
+  woTitle:"Zmaga brez boja", woText:"Nasprotnik ni sprejel izziva v roku, zato zmagaš brez igre in prevzameš njegovo mesto.",
+  confirmWin:"Potrdi zmago", woRecorded:"Zmaga brez boja zabeležena.", claimWo:"Zahtevaj zmago brez boja",
+  wdTitle:"Umakni izziv", wdText:"Izziv bo umaknjen brez posledic za lestvico.", wdDone:"Izziv umaknjen.", withdraw:"Umakni",
+  playBy:"Odigrati do {d}", playPassed:"Rok za igro je potekel", enterResult:"Vpiši rezultat",
+  enteredBy:"Vpisal {r}: zmagal {w}, {s}", confirmed:"Rezultat potrjen.", confirmResult:"Potrdi rezultat",
+  disputed:"Rezultat zavrnjen. Vpišita ga znova.", wrongResult:"Rezultat ni pravilen", contact:"Kontakt: ",
+  orgTitle:"Razveljavi izziv", orgText:"Kot organizator lahko izziv razveljaviš. Lestvica ostane nespremenjena.", orgCancelled:"Izziv razveljavljen.", orgBtn:"Razveljavi (organizator)",
+  myMatches:"Moji dvoboji", joinToChallenge:"Prijavi se na lestvico, da lahko izzivaš.", atTop:"Si na vrhu lestvice. Branil boš mesto pred izzivalci.",
+  canChallenge:"Nimaš odprtih dvobojev. Lahko izzoveš: {n}. Izziv pošlješ na zavihku Lestvica.", or:" ali ",
+  otherMatches:"Ostali odprti dvoboji", noOther:"Trenutno ni drugih odprtih dvobojev.",
+  noResults:"Še ni odigranih dvobojev. Potrjeni rezultati se prikažejo tukaj.", defConceded:"Branilec je predal", defNoAccept:"Branilec ni sprejel v roku",
+  beat:"{w} premaga {l}", pmUnchanged:"Dvoboj za točke · lestvica nespremenjena", movedUp:"↑ izzivalec s {a} na {b} mesto", defKeeps:"Branilec obdrži mesto",
+  noPlayers:"Še ni igralcev. Točke se prikažejo po prvem dvoboju.", ladderPos:"Lestvica: {p}",
+  pointsLegend:"Točke za zmago: 3 in še 1 za vsako mesto, ki ga ima nasprotnik nad tabo (zmaga proti igralcu 5 mest višje prinese 8). Zmaga proti igralcu pod tabo prinese 3. Poraz prinese 0.",
+  sample:" (vzorec)", rulesTitle:"Pravila Smash Golf lestvice",
+  rules:[
+    "Tekmovanje je odprto za vse aktivne igralce golfa in traja celo sezono. Nov igralec se uvrsti na dno lestvice.",
+    "Igra se matchplay, 18 lukenj. Z nasprotnikom se dogovoriš za igrišče in termin. Pri izenačenju se igra naprej do odločilne luknje.",
+    "Izziv za lestvico, ki lahko spremeni mesta, lahko pošlješ samo igralcu, ki je eno ali dve mesti nad tabo.",
+    "Vsak igralec ima naenkrat lahko samo en odprt dvoboj. Igralca, ki je že v dvoboju ali ima odprt izziv, ni mogoče izzvati.",
+    "Izzvani igralec mora izziv sprejeti v {a} dneh. Zavrnitev šteje kot predaja. Če ne odgovori v roku, lahko izzivalec zahteva zmago brez boja.",
+    "Sprejet dvoboj je treba odigrati v {p} dneh.",
+    "Rezultat vpiše eden od igralcev, drugi ga potrdi. Lestvica se posodobi šele po potrditvi.",
+    "Točke: vsaka zmaga prinese 3 točke in še 1 za vsako mesto, ki ga ima nasprotnik nad tabo, zato zmaga proti igralcu 5 mest višje prinese 8. Zmaga proti igralcu pod tabo prinese 3. Poraz prinese 0. Zmaga brez boja in predaja štejeta kot zmaga.",
+    "Vsakega drugega igralca, nad tabo ali pod tabo, lahko povabiš na dvoboj za točke. Prinese točke, lestvice pa ne spremeni. Povabljeni ga lahko zavrne brez posledic.",
+    "Če zmaga izzivalec, prevzame mesto poraženega. Poraženi in vsi igralci vmes se pomaknejo eno mesto nižje. Če zmaga branilec, lestvica ostane nespremenjena.",
+    "Organizator lahko razveljavi sporen izziv. Igralec lahko kadar koli izstopi; ob ponovni prijavi začne na dnu."],
+  sc_x19:"Na 19. luknji", sc_x20:"Na 20. luknji", sc_x21:"Na 21. luknji", sc_conceded:"Predaja", sc_walkover:"Brez boja", tabJoin:"Nov igralec", tabSignIn:"Že sem prijavljen", fPin:"PIN (4 številke)", pinNote:"Izberi 4-mestni PIN. Na katerem koli telefonu se prijaviš z imenom in PIN-om.", signInIntro:"Izberi svoje ime in vpiši PIN.", signInBtn:"Vstopi", pickName:"Izberi svoje ime", wrongPin:"Ime ali PIN ni pravilen.", badPin:"PIN mora imeti od 4 do 8 številk.", nameTaken:"To ime je že na lestvici. Če si to ti, se raje prijavi.", signOut:"Odjava", signedOut:"Odjavljen.", welcomeBack:"Dobrodošel nazaj!", forgotPin:"Si pozabil PIN? Organizator ga lahko ponastavi.", installTitle:"Namesti Smash Golf na telefon", installIos:"iPhone: tapni gumb Deli, nato »Dodaj na začetni zaslon«.", installAndroid:"Android: odpri meni brskalnika ⋮ in tapni »Namesti aplikacijo« ali »Dodaj na začetni zaslon«.", installBtn:"Namesti", hide:"Skrij", notConfigured:"Aplikacija še ni povezana z bazo. Medtem lahko preizkusiš preizkusni način.", resetPin:"Ponastavi PIN igralca", newPin:"Nov PIN", player:"Igralec", pinReset:"PIN spremenjen. Sporoči igralcu nov PIN.", organiser:"Organizator"
+},
+de:{
+  tag:"Offene Matchplay-Leiter · Saison {s}", regTitle:"Bei der Leiter anmelden",
+  regIntro:"Neue Spieler starten unten auf der Leiter. Von dort forderst du Spieler heraus, die ein oder zwei Plätze über dir stehen, und steigst mit Siegen auf.",
+  fName:"Vor- und Nachname", fClub:"Heimatclub", fHcp:"Handicap (HCP)", fContact:"Kontakt für Terminabsprachen", fHcpShort:"Handicap", fContactShort:"Kontakt",
+  phClub:"z. B. GK Bled", phHcp:"z. B. 14,2", phContact:"Telefon oder E-Mail", join:"Anmelden",
+  contactNote:"Deinen Kontakt sehen nur angemeldete Spieler, damit ihr einen Termin vereinbaren könnt.",
+  busyLadder:"Gerade aktualisiert jemand anderes die Leiter. Versuche es in ein paar Sekunden erneut.",
+  genericErr:"Etwas ist schiefgelaufen.", noPerm:"Du darfst den Wettbewerb nicht ändern. Der Organisator muss dir Bearbeitungsrechte geben.",
+  unavailable:"Der Server ist gerade nicht erreichbar. Versuche es erneut.", quota:"Die Datenbank des Wettbewerbs ist voll. Informiere den Organisator.",
+  enterName:"Gib deinen Vor- und Nachnamen ein.", cantChallenge:"Diesen Spieler kannst du gerade nicht herausfordern.",
+  noPermJoin:"Du darfst dich nicht anmelden. Der Organisator muss die App mit Bearbeitungsrechten mit dir teilen.", joinFailed:"Anmeldung fehlgeschlagen.",
+  signIn:"Melde dich in deinem Konto an, um am echten Wettbewerb teilzunehmen.", slow:"Die Verbindung ist langsam. Die Daten sind eventuell nicht aktuell.",
+  loadErr:"Die Daten konnten nicht geladen werden ({c}). Lade die Seite später neu.", welcome:"Willkommen auf der Leiter!",
+  cancel:"Abbrechen", close:"Schließen", save:"Speichern",
+  iWon:"Ich habe gewonnen", oppWon:"{n} hat gewonnen", winner:"Sieger", result:"Ergebnis", confirmNote:"Dein Gegner muss das Ergebnis bestätigen, erst dann wird die Leiter aktualisiert.",
+  enterResultTitle:"Ergebnis eintragen", resultSent:"Ergebnis zur Bestätigung gesendet.", sendResult:"Ergebnis senden",
+  myProfile:"Mein Profil", profileSaved:"Profil gespeichert.", leaveTitle:"Leiter verlassen",
+  leaveText:"Du wirst von der Leiter entfernt und deine offenen Forderungen werden storniert. Bei erneuter Anmeldung startest du unten.",
+  leave:"Verlassen", leftMsg:"Du hast die Leiter verlassen.",
+  tLadder:"Leiter", tChallenges:"Forderungen", tPoints:"Punkte", tResults:"Ergebnisse", tRules:"Regeln",
+  playAs:"Spielen als:", testMode:"Testmodus", testModeDesc:" mit Beispielspielern. Nichts wird gespeichert.", backReal:"Zurück zur echten Leiter",
+  realAvailable:"Der echte Wettbewerb ist in der veröffentlichten App verfügbar.", tryFirst:"Möchtest du zuerst ausprobieren, wie Forderungen funktionieren?",
+  editProfile:"Profil bearbeiten", meStats:(p,w,l)=>`${p} Pkt. · ${w} ${w===1?"Sieg":"Siege"} · ${l} ${l===1?"Niederlage":"Niederlagen"}`,
+  loading:"Leiter wird geladen …", emptyTitle:"Die Leiter ist noch leer",
+  emptyText:"Der erste angemeldete Spieler belegt Platz 1. Melde dich oben an und schicke den Link zur App an deine Mitspieler.",
+  inMatch:"Im Match", hasOpen:"Hat eine offene Forderung", challengeTitle:"{n} herausfordern",
+  challengeText:"Du forderst den Spieler auf Platz {pos} heraus. Wenn du gewinnst, übernimmst du seinen Platz, und er sowie alle dazwischen rücken einen Platz nach unten. Dein Gegner hat {d} Tage Zeit, um anzunehmen.",
+  sendChallenge:"Forderung senden", challengeSent:"Forderung gesendet.", challengeBtn:"Herausfordern",
+  meBusyTip:"Du hast bereits eine offene Forderung", busyTip:"Dieser Spieler ist beschäftigt",
+  pmTitle:"Punktematch gegen {n}",
+  pmText:(pos,w,l)=>`Dies ist ein Punktematch gegen den Spieler auf Platz ${pos}. Die Leiter ändert sich nicht. Wenn du gewinnst, bekommst du ${w} ${w===1?"Punkt":"Punkte"}; gewinnt er, bekommt er ${l}. Er kann ohne Nachteil ablehnen.`,
+  sendInvite:"Einladung senden", inviteSent:"Einladung zum Punktematch gesendet.", pmBtn:"Punktematch +{w}",
+  you:"Du", inRange:"In Reichweite · Sieg {p} Pkt.", pts:"{p} Pkt.", place:"Platz {pos}",
+  challenger:"Herausforderer", defender:"Verteidiger",
+  stPending:"Wartet auf Annahme", stAccepted:"Termin vereinbaren und spielen", stReported:"Wartet auf Bestätigung des Ergebnisses", pointsMatch:"Punktematch",
+  daysLeft:d=>`Noch ${d} ${d===1?"Tag":"Tage"} zum Annehmen`, acceptPassed:"Frist zum Annehmen ist abgelaufen",
+  acceptedMsg:"Forderung angenommen. Vereinbart einen Termin.", accept:"Annehmen",
+  declineTitle:"Forderung ablehnen", declineText:"Ablehnen gilt als Aufgabe: Der Herausforderer übernimmt deinen Platz und bekommt die Punkte.",
+  declineConcede:"Ablehnen und aufgeben", declined:"Forderung abgelehnt.", decline:"Ablehnen", pmDeclined:"Punktematch abgelehnt.",
+  woTitle:"Kampfloser Sieg", woText:"Dein Gegner hat nicht rechtzeitig angenommen. Du gewinnst ohne zu spielen und übernimmst seinen Platz.",
+  confirmWin:"Sieg bestätigen", woRecorded:"Kampfloser Sieg eingetragen.", claimWo:"Kampflosen Sieg beanspruchen",
+  wdTitle:"Forderung zurückziehen", wdText:"Die Forderung wird ohne Auswirkung auf die Leiter zurückgezogen.", wdDone:"Forderung zurückgezogen.", withdraw:"Zurückziehen",
+  playBy:"Spielen bis {d}", playPassed:"Frist zum Spielen ist abgelaufen", enterResult:"Ergebnis eintragen",
+  enteredBy:"Eingetragen von {r}: {w} hat gewonnen, {s}", confirmed:"Ergebnis bestätigt.", confirmResult:"Ergebnis bestätigen",
+  disputed:"Ergebnis abgelehnt. Tragt es erneut ein.", wrongResult:"Ergebnis ist falsch", contact:"Kontakt: ",
+  orgTitle:"Forderung annullieren", orgText:"Als Organisator kannst du diese Forderung annullieren. Die Leiter bleibt unverändert.", orgCancelled:"Forderung annulliert.", orgBtn:"Annullieren (Organisator)",
+  myMatches:"Meine Matches", joinToChallenge:"Melde dich bei der Leiter an, um herauszufordern.", atTop:"Du stehst an der Spitze der Leiter. Verteidige deinen Platz gegen Herausforderer.",
+  canChallenge:"Du hast keine offenen Matches. Du kannst {n} herausfordern. Sende die Forderung im Tab Leiter.", or:" oder ",
+  otherMatches:"Weitere offene Matches", noOther:"Derzeit keine weiteren offenen Matches.",
+  noResults:"Noch keine Matches gespielt. Bestätigte Ergebnisse erscheinen hier.", defConceded:"Verteidiger hat aufgegeben", defNoAccept:"Verteidiger hat nicht rechtzeitig angenommen",
+  beat:"{w} schlägt {l}", pmUnchanged:"Punktematch · Leiter unverändert", movedUp:"↑ Herausforderer von Platz {a} auf {b}", defKeeps:"Verteidiger behält den Platz",
+  noPlayers:"Noch keine Spieler. Punkte erscheinen nach dem ersten Match.", ladderPos:"Leiter: Platz {p}",
+  pointsLegend:"Punkte für einen Sieg: 3, plus 1 für jeden Platz, den dein Gegner über dir steht (Sieg gegen einen Spieler 5 Plätze höher = 8). Ein Sieg gegen einen Spieler unter dir gibt 3. Eine Niederlage gibt 0.",
+  sample:" (Beispiel)", rulesTitle:"Regeln der Smash Golf Leiter",
+  rules:[
+    "Der Wettbewerb ist offen für alle aktiven Golfer und läuft die ganze Saison. Neue Spieler steigen unten auf der Leiter ein.",
+    "Gespielt wird Matchplay über 18 Löcher. Platz und Termin vereinbarst du mit deinem Gegner. Bei Gleichstand wird weitergespielt, bis ein Loch gewonnen ist.",
+    "Eine Leiter-Forderung, die Plätze verändern kann, geht nur an Spieler, die ein oder zwei Plätze über dir stehen.",
+    "Jeder Spieler kann nur ein offenes Match gleichzeitig haben. Wer bereits im Match ist oder eine offene Forderung hat, kann nicht herausgefordert werden.",
+    "Der geforderte Spieler muss innerhalb von {a} Tagen annehmen. Ablehnen gilt als Aufgabe. Ohne Antwort in der Frist kann der Herausforderer einen kampflosen Sieg beanspruchen.",
+    "Ein angenommenes Match muss innerhalb von {p} Tagen gespielt werden.",
+    "Ein Spieler trägt das Ergebnis ein, der andere bestätigt es. Die Leiter wird erst nach der Bestätigung aktualisiert.",
+    "Punkte: Jeder Sieg bringt 3 Punkte plus 1 für jeden Platz, den dein Gegner über dir steht; ein Sieg gegen einen Spieler 5 Plätze höher bringt also 8. Ein Sieg gegen einen Spieler unter dir bringt 3. Eine Niederlage gibt 0. Kampflose Siege und Aufgaben zählen als Siege.",
+    "Du kannst jeden anderen Spieler, über oder unter dir, zu einem Punktematch einladen. Es bringt Punkte, ändert aber die Leiter nicht, und der Eingeladene kann ohne Nachteil ablehnen.",
+    "Gewinnt der Herausforderer, übernimmt er den Platz des Verlierers. Der Verlierer und alle Spieler dazwischen rücken einen Platz nach unten. Gewinnt der Verteidiger, bleibt die Leiter gleich.",
+    "Der Organisator kann eine strittige Forderung annullieren. Ein Spieler kann jederzeit aussteigen und beginnt bei erneuter Anmeldung unten."],
+  sc_x19:"Am 19. Loch", sc_x20:"Am 20. Loch", sc_x21:"Am 21. Loch", sc_conceded:"Aufgegeben", sc_walkover:"Kampflos", tabJoin:"Neuer Spieler", tabSignIn:"Ich bin schon dabei", fPin:"PIN (4 Ziffern)", pinNote:"Wähle eine 4-stellige PIN. Du meldest dich auf jedem Handy mit Name und PIN an.", signInIntro:"Wähle deinen Namen und gib deine PIN ein.", signInBtn:"Einloggen", pickName:"Wähle deinen Namen", wrongPin:"Name oder PIN ist falsch.", badPin:"Die PIN muss 4 bis 8 Ziffern haben.", nameTaken:"Dieser Name steht schon auf der Leiter. Wenn du das bist, logge dich stattdessen ein.", signOut:"Abmelden", signedOut:"Abgemeldet.", welcomeBack:"Willkommen zurück!", forgotPin:"PIN vergessen? Der Organisator kann sie zurücksetzen.", installTitle:"Smash Golf aufs Handy installieren", installIos:"iPhone: Teilen-Taste tippen, dann „Zum Home-Bildschirm“.", installAndroid:"Android: Browsermenü ⋮ öffnen und „App installieren“ oder „Zum Startbildschirm hinzufügen“ tippen.", installBtn:"Installieren", hide:"Ausblenden", notConfigured:"Die App ist noch nicht mit ihrer Datenbank verbunden. Probiere solange den Testmodus aus.", resetPin:"PIN eines Spielers zurücksetzen", newPin:"Neue PIN", player:"Spieler", pinReset:"PIN geändert. Teile dem Spieler die neue PIN mit.", organiser:"Organisator"
+},
+it:{
+  tag:"Classifica matchplay aperta · Stagione {s}", regTitle:"Iscriviti alla classifica",
+  regIntro:"I nuovi giocatori partono dal fondo della classifica. Da lì sfidi i giocatori una o due posizioni sopra di te e sali vincendo.",
+  fName:"Nome e cognome", fClub:"Circolo di appartenenza", fHcp:"Handicap (HCP)", fContact:"Contatto per accordarsi", fHcpShort:"Handicap", fContactShort:"Contatto",
+  phClub:"es. GK Bled", phHcp:"es. 14,2", phContact:"telefono o e-mail", join:"Iscriviti",
+  contactNote:"Il tuo contatto è visibile solo ai giocatori iscritti, così potete fissare un orario di partenza.",
+  busyLadder:"Qualcun altro sta aggiornando la classifica. Riprova tra qualche secondo.",
+  genericErr:"Qualcosa è andato storto.", noPerm:"Non hai il permesso di modificare la competizione. L'organizzatore deve darti l'accesso in modifica.",
+  unavailable:"Il server non è raggiungibile in questo momento. Riprova.", quota:"Il database della competizione è pieno. Avvisa l'organizzatore.",
+  enterName:"Inserisci nome e cognome.", cantChallenge:"Al momento non puoi sfidare questo giocatore.",
+  noPermJoin:"Non hai il permesso di iscriverti. L'organizzatore deve condividere l'app con te con accesso in modifica.", joinFailed:"Iscrizione non riuscita.",
+  signIn:"Accedi al tuo account per partecipare alla competizione reale.", slow:"La connessione è lenta. I dati potrebbero non essere aggiornati.",
+  loadErr:"Impossibile caricare i dati ({c}). Ricarica la pagina più tardi.", welcome:"Benvenuto in classifica!",
+  cancel:"Annulla", close:"Chiudi", save:"Salva",
+  iWon:"Ho vinto io", oppWon:"Ha vinto {n}", winner:"Vincitore", result:"Risultato", confirmNote:"L'avversario deve confermare il risultato prima che la classifica si aggiorni.",
+  enterResultTitle:"Inserisci il risultato", resultSent:"Risultato inviato per la conferma.", sendResult:"Invia risultato",
+  myProfile:"Il mio profilo", profileSaved:"Profilo salvato.", leaveTitle:"Lascia la classifica",
+  leaveText:"Verrai rimosso dalla classifica e le tue sfide aperte saranno annullate. Se ti iscrivi di nuovo, ripartirai dal fondo.",
+  leave:"Lascia", leftMsg:"Hai lasciato la classifica.",
+  tLadder:"Classifica", tChallenges:"Sfide", tPoints:"Punti", tResults:"Risultati", tRules:"Regole",
+  playAs:"Gioca come:", testMode:"Modalità prova", testModeDesc:" con giocatori di esempio. Nulla viene salvato.", backReal:"Torna alla classifica reale",
+  realAvailable:"La competizione reale è disponibile nell'app pubblicata.", tryFirst:"Vuoi prima provare come funzionano le sfide?",
+  editProfile:"Modifica profilo", meStats:(p,w,l)=>`${p} pt · ${w} ${w===1?"vittoria":"vittorie"} · ${l} ${l===1?"sconfitta":"sconfitte"}`,
+  loading:"Caricamento classifica…", emptyTitle:"La classifica è ancora vuota",
+  emptyText:"Il primo giocatore iscritto occupa il 1º posto. Iscriviti qui sopra e poi invia il link dell'app agli altri golfisti.",
+  inMatch:"In un match", hasOpen:"Ha una sfida aperta", challengeTitle:"Sfida {n}",
+  challengeText:"Stai sfidando il giocatore al {pos} posto. Se vinci, prendi il suo posto e lui e chi sta in mezzo scendono di una posizione. L'avversario ha {d} giorni per accettare.",
+  sendChallenge:"Invia sfida", challengeSent:"Sfida inviata.", challengeBtn:"Sfida",
+  meBusyTip:"Hai già una sfida aperta", busyTip:"Questo giocatore è impegnato",
+  pmTitle:"Match a punti contro {n}",
+  pmText:(pos,w,l)=>`Questo è un match a punti contro il giocatore al ${pos} posto. La classifica non cambia. Se vinci ottieni ${w} ${w===1?"punto":"punti"}; se vince lui, ne ottiene ${l}. Può rifiutare senza penalità.`,
+  sendInvite:"Invia invito", inviteSent:"Invito al match a punti inviato.", pmBtn:"Match a punti +{w}",
+  you:"Tu", inRange:"Sfidabile · vittoria {p} pt", pts:"{p} pt", place:"{pos} posto",
+  challenger:"Sfidante", defender:"Sfidato",
+  stPending:"In attesa di accettazione", stAccepted:"Accordatevi e giocate", stReported:"In attesa di conferma del risultato", pointsMatch:"Match a punti",
+  daysLeft:d=>`${d} ${d===1?"giorno":"giorni"} per accettare`, acceptPassed:"Termine per accettare scaduto",
+  acceptedMsg:"Sfida accettata. Accordatevi su un orario di partenza.", accept:"Accetta",
+  declineTitle:"Rifiuta la sfida", declineText:"Rifiutare equivale a concedere: lo sfidante prende il tuo posto e ottiene i punti.",
+  declineConcede:"Rifiuta e concedi", declined:"Sfida rifiutata.", decline:"Rifiuta", pmDeclined:"Match a punti rifiutato.",
+  woTitle:"Vittoria a tavolino", woText:"L'avversario non ha accettato in tempo: vinci senza giocare e prendi il suo posto.",
+  confirmWin:"Conferma vittoria", woRecorded:"Vittoria a tavolino registrata.", claimWo:"Richiedi vittoria a tavolino",
+  wdTitle:"Ritira la sfida", wdText:"La sfida sarà ritirata senza effetti sulla classifica.", wdDone:"Sfida ritirata.", withdraw:"Ritira",
+  playBy:"Da giocare entro il {d}", playPassed:"Termine per giocare scaduto", enterResult:"Inserisci risultato",
+  enteredBy:"Inserito da {r}: ha vinto {w}, {s}", confirmed:"Risultato confermato.", confirmResult:"Conferma risultato",
+  disputed:"Risultato contestato. Inseritelo di nuovo.", wrongResult:"Il risultato è sbagliato", contact:"Contatto: ",
+  orgTitle:"Annulla la sfida", orgText:"Come organizzatore puoi annullare questa sfida. La classifica resta invariata.", orgCancelled:"Sfida annullata.", orgBtn:"Annulla (organizzatore)",
+  myMatches:"I miei match", joinToChallenge:"Iscriviti alla classifica per poter sfidare.", atTop:"Sei in vetta alla classifica. Difendi il tuo posto dagli sfidanti.",
+  canChallenge:"Non hai match aperti. Puoi sfidare {n}. Invia la sfida dalla scheda Classifica.", or:" o ",
+  otherMatches:"Altri match aperti", noOther:"Al momento non ci sono altri match aperti.",
+  noResults:"Nessun match giocato finora. I risultati confermati appariranno qui.", defConceded:"Lo sfidato ha concesso", defNoAccept:"Lo sfidato non ha accettato in tempo",
+  beat:"{w} batte {l}", pmUnchanged:"Match a punti · classifica invariata", movedUp:"↑ sfidante dal {a} al {b} posto", defKeeps:"Lo sfidato mantiene il posto",
+  noPlayers:"Ancora nessun giocatore. I punti appariranno dopo il primo match.", ladderPos:"Classifica: {p}",
+  pointsLegend:"Punti per una vittoria: 3, più 1 per ogni posizione in cui l'avversario è sopra di te (battere un giocatore 5 posizioni sopra vale 8). Battere un giocatore sotto di te vale 3. Una sconfitta vale 0.",
+  sample:" (esempio)", rulesTitle:"Regole della classifica Smash Golf",
+  rules:[
+    "La competizione è aperta a tutti i golfisti attivi e dura tutta la stagione. I nuovi giocatori entrano in fondo alla classifica.",
+    "Si gioca matchplay su 18 buche. Campo e orario si concordano con l'avversario. In caso di parità si prosegue finché una buca non viene vinta.",
+    "Una sfida di classifica, che può cambiare le posizioni, può essere lanciata solo a un giocatore una o due posizioni sopra di te.",
+    "Ogni giocatore può avere un solo match aperto alla volta. Chi è già in un match o ha una sfida aperta non può essere sfidato.",
+    "Lo sfidato deve accettare entro {a} giorni. Rifiutare equivale a concedere. Senza risposta entro il termine, lo sfidante può richiedere la vittoria a tavolino.",
+    "Un match accettato va giocato entro {p} giorni.",
+    "Un giocatore inserisce il risultato e l'altro lo conferma. La classifica si aggiorna solo dopo la conferma.",
+    "Punti: ogni vittoria vale 3 punti più 1 per ogni posizione in cui l'avversario è sopra di te, quindi battere un giocatore 5 posizioni sopra vale 8. Battere un giocatore sotto di te vale 3. Una sconfitta vale 0. Vittorie a tavolino e concessioni contano come vittorie.",
+    "Puoi invitare qualsiasi altro giocatore, sopra o sotto di te, a un match a punti. Dà punti ma non cambia la classifica, e l'invitato può rifiutare senza penalità.",
+    "Se vince lo sfidante, prende il posto dello sconfitto. Lo sconfitto e tutti i giocatori in mezzo scendono di una posizione. Se vince lo sfidato, la classifica non cambia.",
+    "L'organizzatore può annullare una sfida contestata. Un giocatore può ritirarsi in qualsiasi momento e, se si iscrive di nuovo, riparte dal fondo."],
+  sc_x19:"Alla 19ª buca", sc_x20:"Alla 20ª buca", sc_x21:"Alla 21ª buca", sc_conceded:"Concesso", sc_walkover:"A tavolino", tabJoin:"Nuovo giocatore", tabSignIn:"Sono già iscritto", fPin:"PIN (4 cifre)", pinNote:"Scegli un PIN di 4 cifre. Accedi con nome e PIN da qualsiasi telefono.", signInIntro:"Scegli il tuo nome e inserisci il PIN.", signInBtn:"Entra", pickName:"Scegli il tuo nome", wrongPin:"Nome o PIN errato.", badPin:"Il PIN deve avere da 4 a 8 cifre.", nameTaken:"Questo nome è già in classifica. Se sei tu, accedi.", signOut:"Esci", signedOut:"Disconnesso.", welcomeBack:"Bentornato!", forgotPin:"PIN dimenticato? L'organizzatore può reimpostarlo.", installTitle:"Installa Smash Golf sul telefono", installIos:"iPhone: tocca il pulsante Condividi, poi “Aggiungi alla schermata Home”.", installAndroid:"Android: apri il menu del browser ⋮ e tocca “Installa app” o “Aggiungi a schermata Home”.", installBtn:"Installa", hide:"Nascondi", notConfigured:"L'app non è ancora collegata al database. Nel frattempo puoi provare la modalità prova.", resetPin:"Reimposta il PIN di un giocatore", newPin:"Nuovo PIN", player:"Giocatore", pinReset:"PIN cambiato. Comunica al giocatore il nuovo PIN.", organiser:"Organizzatore"
+}};
+// Match play rules supplied by the organiser (Slovenian original, translated).
+const MP={
+sl:{title:"Match play pravila", intro:"Osnovna (specifična) pravila match playa za enotno in pregledno izvedbo dvobojev.", count:"7 sklopov pravil", badge:"Ready golf ni dovoljen",
+ s:[
+  ["Udarjališče",["Igralec lahko začne igro izven udarjališča brez kazni.","Nasprotnik lahko zahteva preklic in ponovitev udarca znotraj udarjališča.","Nasprotnik mora to storiti takoj, vsekakor preden izvede svoj začetni udarec.","To velja tudi, če igralec začne igro z napačnega udarjališča."]],
+  ["Situacije, ki pomenijo neposredno izgubo luknje",["Igranje napačne žogice.","Igranje z napačnega mesta.","Vsaka izboljšava pogojev za igranje.","Če igralec na vprašanje nasprotnika o številu udarcev in kazni poda napačno informacijo in tega ne popravi, preden nasprotnik odigra naslednji udarec."]],
+  ["Vrstni red igranja",["S prvega udarjališča začne igralec z nižjim HCP; na naslednjih udarjališčih začne igralec, ki je dobil zadnjo luknjo.","Na igrišču mora najprej igrati igralec, ki je dlje od luknje.","Če ni popolnoma jasno, se lahko vrstni red določi po dogovoru.","Če igralec igra, ko ni na vrsti, lahko nasprotnik zahteva preklic udarca brez kazni. Nasprotnik mora to storiti takoj, vsekakor preden izvede svoj naslednji udarec."],"Ready golf NI DOVOLJEN."],
+  ["Končana luknja",["Po vsaki končani luknji mora biti znano, kdo je luknjo dobil, ali pa je izenačena (tie). Kasnejše spremembe niso možne potem, ko je vsaj en igralec odigral z naslednjega udarjališča ali oddal končni rezultat.","Če obstaja spor, mora eden od igralcev obvestiti nasprotnika, da bo zahteval razsodbo. To mora storiti, preden se igra nadaljuje z naslednjega udarjališča ali odda končni rezultat. V tem primeru se rezultat te luknje ne zapiše do razsodbe.","Igra se naprej."]],
+  ["Beleženje rezultata",["Rezultat se beleži kot »1 up«, »2 up« itd.","Končni rezultat se beleži kot »3 : 2«, če je prednost 3 up in sta še dve luknji do konca.","Match je končan, ko ima igralec večjo prednost (več up), kot je lukenj do konca."]],
+  ["Podaljšek (play-off) ob izenačenju",["Če match ni odločen niti na zadnji luknji, morata igralca nadaljevati na 1., 2., 3. itd. luknji, dokler match ni odločen ali predan."]],
+  ["Predaja",["Igralec lahko kadarkoli preda naslednji udarec (given) za končanje luknje.","Igralec lahko kadarkoli po začetnem udarcu preda luknjo.","Igralec lahko kadarkoli preda MATCH."]]
+ ]},
+en:{title:"Match play rules", intro:"Basic (specific) match play rules for consistent and transparent matches.", count:"7 sections", badge:"Ready golf is not allowed",
+ s:[
+  ["Teeing area",["A player may start a hole from outside the teeing area without penalty.","The opponent may require the stroke to be cancelled and replayed from within the teeing area.","The opponent must do so immediately, and in any case before making their own tee shot.","This also applies if the player starts from the wrong teeing area."]],
+  ["Situations that mean immediate loss of the hole",["Playing a wrong ball.","Playing from a wrong place.","Any improvement of the conditions affecting play.","Giving the opponent wrong information about the number of strokes and penalties when asked, and not correcting it before the opponent plays their next stroke."]],
+  ["Order of play",["On the first tee the player with the lower HCP plays first; on each following tee the player who won the last hole plays first.","On the course, the player farther from the hole plays first.","If it is not completely clear, the order can be agreed.","If a player plays out of turn, the opponent may require the stroke to be cancelled without penalty. The opponent must do so immediately, and in any case before making their next stroke."],"Ready golf is NOT ALLOWED."],
+  ["Completed hole",["After each hole it must be clear who won the hole or whether it was halved (tie). It can no longer be changed once at least one player has played from the next tee or submitted the final result.","If there is a dispute, one player must tell the opponent that they will ask for a ruling. This must be done before play continues from the next tee or the final result is submitted. In that case the result of the hole is not recorded until the ruling.","Play continues."]],
+  ["Recording the score",["The score is recorded as “1 up”, “2 up” and so on.","The final result is recorded as “3 : 2” when a player is 3 up with two holes left.","The match is over when a player is more holes up than there are holes left to play."]],
+  ["Play-off when tied",["If the match is still not decided after the last hole, the players continue on hole 1, 2, 3 and so on until the match is decided or conceded."]],
+  ["Concession",["A player may concede the next stroke (given) at any time to finish the hole.","A player may concede a hole at any time after the tee shot.","A player may concede the MATCH at any time."]]
+ ]},
+de:{title:"Matchplay-Regeln", intro:"Grundlegende (spezifische) Matchplay-Regeln für eine einheitliche und transparente Durchführung der Matches.", count:"7 Regelbereiche", badge:"Ready Golf ist nicht erlaubt",
+ s:[
+  ["Abschlag",["Ein Spieler darf ein Loch ohne Strafe von außerhalb des Abschlags beginnen.","Der Gegner kann verlangen, dass der Schlag annulliert und innerhalb des Abschlags wiederholt wird.","Der Gegner muss dies sofort tun, in jedem Fall bevor er seinen eigenen Abschlag spielt.","Das gilt auch, wenn der Spieler vom falschen Abschlag beginnt."]],
+  ["Situationen, die zum sofortigen Lochverlust führen",["Spielen eines falschen Balls.","Spielen von einem falschen Ort.","Jede Verbesserung der Bedingungen für das Spiel.","Wenn ein Spieler dem Gegner auf Nachfrage eine falsche Auskunft über die Anzahl der Schläge und Strafen gibt und sie nicht korrigiert, bevor der Gegner seinen nächsten Schlag spielt."]],
+  ["Spielreihenfolge",["Am ersten Abschlag beginnt der Spieler mit dem niedrigeren HCP; an den folgenden Abschlägen beginnt der Spieler, der das letzte Loch gewonnen hat.","Auf dem Platz spielt zuerst der Spieler, der weiter vom Loch entfernt ist.","Wenn es nicht ganz klar ist, kann die Reihenfolge vereinbart werden.","Spielt ein Spieler außer der Reihe, kann der Gegner verlangen, dass der Schlag ohne Strafe annulliert wird. Der Gegner muss dies sofort tun, in jedem Fall bevor er seinen nächsten Schlag spielt."],"Ready Golf ist NICHT ERLAUBT."],
+  ["Beendetes Loch",["Nach jedem Loch muss feststehen, wer es gewonnen hat oder ob es geteilt wurde (Tie). Spätere Änderungen sind nicht mehr möglich, sobald mindestens ein Spieler vom nächsten Abschlag gespielt oder das Endergebnis eingereicht hat.","Bei einem Streitfall muss einer der Spieler dem Gegner mitteilen, dass er eine Entscheidung verlangen wird. Das muss geschehen, bevor vom nächsten Abschlag weitergespielt oder das Endergebnis eingereicht wird. In diesem Fall wird das Ergebnis des Lochs erst nach der Entscheidung eingetragen.","Es wird weitergespielt."]],
+  ["Ergebnis notieren",["Der Stand wird als „1 up“, „2 up“ usw. notiert.","Das Endergebnis wird als „3 : 2“ notiert, wenn ein Spieler 3 up ist und noch zwei Löcher zu spielen sind.","Das Match ist beendet, wenn ein Spieler mehr Löcher vorne liegt, als noch zu spielen sind."]],
+  ["Stechen (Play-off) bei Gleichstand",["Ist das Match auch nach dem letzten Loch nicht entschieden, spielen die Spieler auf Loch 1, 2, 3 usw. weiter, bis das Match entschieden oder aufgegeben ist."]],
+  ["Aufgabe und Schenken",["Ein Spieler kann jederzeit den nächsten Schlag schenken (given), um das Loch zu beenden.","Ein Spieler kann nach dem Abschlag jederzeit ein Loch aufgeben.","Ein Spieler kann jederzeit das MATCH aufgeben."]]
+ ]},
+it:{title:"Regole del match play", intro:"Regole di base (specifiche) del match play per uno svolgimento uniforme e trasparente dei match.", count:"7 gruppi di regole", badge:"Il ready golf non è consentito",
+ s:[
+  ["Area di partenza",["Un giocatore può iniziare la buca da fuori dell'area di partenza senza penalità.","L'avversario può chiedere che il colpo venga annullato e ripetuto dall'interno dell'area di partenza.","L'avversario deve farlo subito, e comunque prima di eseguire il proprio colpo di partenza.","Questo vale anche se il giocatore inizia dall'area di partenza sbagliata."]],
+  ["Situazioni che comportano la perdita immediata della buca",["Giocare una palla sbagliata.","Giocare da un luogo sbagliato.","Qualsiasi miglioramento delle condizioni di gioco.","Se il giocatore, alla domanda dell'avversario sul numero di colpi e penalità, dà un'informazione sbagliata e non la corregge prima che l'avversario giochi il colpo successivo."]],
+  ["Ordine di gioco",["Sul primo tee gioca per primo il giocatore con l'HCP più basso; sui tee successivi inizia chi ha vinto l'ultima buca.","Sul percorso gioca per primo il giocatore più lontano dalla buca.","Se non è del tutto chiaro, l'ordine può essere concordato.","Se un giocatore gioca fuori turno, l'avversario può chiedere l'annullamento del colpo senza penalità. L'avversario deve farlo subito, e comunque prima di eseguire il proprio colpo successivo."],"Il ready golf NON È CONSENTITO."],
+  ["Buca completata",["Dopo ogni buca deve essere chiaro chi l'ha vinta o se è stata pareggiata (tie). Non sono possibili modifiche dopo che almeno un giocatore ha giocato dal tee successivo o ha consegnato il risultato finale.","In caso di disputa, uno dei giocatori deve avvisare l'avversario che chiederà una decisione. Deve farlo prima che il gioco riprenda dal tee successivo o che venga consegnato il risultato finale. In tal caso il risultato della buca non viene registrato fino alla decisione.","Si continua a giocare."]],
+  ["Registrazione del risultato",["Il punteggio si registra come “1 up”, “2 up” e così via.","Il risultato finale si registra come “3 : 2” se un giocatore è 3 up con due buche ancora da giocare.","Il match è finito quando un giocatore ha più buche di vantaggio di quante ne restino da giocare."]],
+  ["Spareggio (play-off) in caso di parità",["Se il match non è deciso nemmeno all'ultima buca, i giocatori continuano dalla buca 1, 2, 3 ecc. finché il match non è deciso o concesso."]],
+  ["Concessione",["Un giocatore può concedere in qualsiasi momento il colpo successivo (given) per chiudere la buca.","Un giocatore può concedere una buca in qualsiasi momento dopo il colpo di partenza.","Un giocatore può concedere il MATCH in qualsiasi momento."]]
+ ]}
+};
+const LANGS=["en","sl","de","it"];
+let LANG="en";
+try{ const l=localStorage.getItem("sg-lang"); if(LANGS.includes(l)) LANG=l; else { const n=(navigator.language||"").slice(0,2).toLowerCase(); if(LANGS.includes(n)) LANG=n; } }catch(e){}
+function t(k, v){
+  let s = (I18N[LANG][k]!==undefined) ? I18N[LANG][k] : I18N.en[k];
+  if(typeof s!=="string") return s;
+  if(v) s=s.replace(/\{(\w+)\}/g,(m,x)=>v[x]!==undefined?v[x]:m);
+  return s;
+}
+const LEGACY_SCORES={"At the 19th":"x19","At the 20th":"x20","At the 21st":"x21","Conceded":"conceded","Walkover":"walkover","Predaja":"conceded","Brez boja":"walkover"};
+function scoreLabel(s){ if(!s) return ""; const k=LEGACY_SCORES[s]||s; if(/^\d+&\d+$/.test(k)) return k.replace("&"," : "); const v=I18N[LANG]["sc_"+k]; return v||s; }
+function applyStatic(){
+  document.documentElement.lang=LANG;
+  document.getElementById("tagline").textContent=t("tag",{s:SEASON});
+  document.querySelectorAll("[data-i18n]").forEach(el=>{ el.textContent=t(el.getAttribute("data-i18n")); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{ el.setAttribute("placeholder",t(el.getAttribute("data-i18n-ph"))); });
+  document.querySelectorAll("#langs .lang").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.lang===LANG)));
+}
+document.getElementById("langs").addEventListener("click",e=>{
+  const b=e.target.closest("[data-lang]"); if(!b) return;
+  LANG=b.dataset.lang; try{ localStorage.setItem("sg-lang",LANG); }catch(err){}
+  closeModal(); applyStatic(); if(S.mode==="demo"){ relabelDemo(); } render();
+});
+// ---------- constants ----------
+const SEASON = "2027";
+const OPEN = ["pending","accepted","reported"];
+const ACCEPT_DAYS = 7, PLAY_DAYS = 21;
+const SCORES = ["1 up","2 up","2&1","3&1","3&2","4&2","4&3","5&3","5&4","6&4","6&5","7&5","7&6","8&6","8&7","9&7","9&8","10&8","x19","x20","x21","conceded"];
+const DAY = 86400000;
+
+// ---------- state ----------
+const S = {
+  mode:"loading", players:{}, order:[], challenges:{},
+  me:null, isOwner:false, canWrite:true, tab:"lestvica",
+  liveMe:null, demoMe:null, live:null, err:null
+};
+try{ const t = localStorage.getItem("sg-tab"); if(t) S.tab=t; }catch(e){}
+
+// ---------- tiny DOM helper ----------
+function h(tag, attrs, ...kids){
+  const el = document.createElement(tag);
+  if(attrs) for(const k in attrs){
+    const v = attrs[k];
+    if(v==null || v===false) continue;
+    if(k==="class") el.className=v;
+    else if(k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if(k==="text") el.textContent=v;
+    else el.setAttribute(k, v===true?"":v);
+  }
+  for(const k of kids.flat()){ if(k==null||k===false) continue; el.append(k.nodeType?k:document.createTextNode(String(k))); }
+  return el;
+}
+function fmtDate(t){ try{ return new Date(t).toLocaleDateString({en:"en-GB",sl:"sl-SI",de:"de-DE",it:"it-IT"}[LANG],{day:"numeric",month:"short"}); }catch(e){ return ""; } }
+function daysLeft(t, days){ return Math.ceil((t + days*DAY - Date.now())/DAY); }
+function rid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+let toastT;
+function toast(msg){
+  const old=document.querySelector(".toast"); if(old) old.remove();
+  const t=h("div",{class:"toast",role:"status",text:msg}); document.body.append(t);
+  clearTimeout(toastT); toastT=setTimeout(()=>t.remove(),3200);
+}
+
+// ---------- derived ----------
+function ladder(){ return S.order.filter(id => S.players[id]); }
+function posOf(id){ const i=ladder().indexOf(id); return i<0?null:i+1; }
+function ord(n){ if(LANG==="de") return String(n); if(LANG==="it") return n+"º"; if(LANG!=="en") return n+"."; const s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+function pname(id){ return (S.players[id] && S.players[id].name) || ({en:"Former player",sl:"Nekdanji igralec",de:"Ehemaliger Spieler",it:"Ex giocatore"})[LANG]; }
+function openOf(id){
+  return Object.values(S.challenges).filter(c => OPEN.includes(c.status) && (c.challenger===id || c.defender===id))
+    .sort((a,b)=>a.createdAt-b.createdAt);
+}
+function stats(id){
+  let w=0,l=0,pts=0;
+  for(const c of Object.values(S.challenges)){
+    if(c.status!=="done") continue;
+    if(c.challenger!==id && c.defender!==id) continue;
+    if(c.winner===id){ w++; pts+=ptsOf(c); } else l++;
+  }
+  return {w,l,pts};
+}
+// Points for a win depend on where the loser stood relative to the winner when the match was decided.
+function pointsFor(winPos, losePos){
+  const r=winPos-losePos; // >0: loser was above the winner
+  return r>0 ? 3+r : 3;
+}
+function ptsOf(c){
+  if(typeof c.points==="number") return c.points;
+  const wp=c.winner===c.challenger?c.chPos:c.dePos, lp=c.winner===c.challenger?c.dePos:c.chPos;
+  return (wp&&lp)?pointsFor(wp,lp):0;
+}
+function kindOf(c){ return c.kind || ((c.chPos||0)>(c.dePos||0)?"ladder":"points"); }
+function eligibility(meId, tId){
+  const L=ladder(), mi=L.indexOf(meId), ti=L.indexOf(tId);
+  if(mi<0||ti<0) return {ok:false};
+  const d=mi-ti;
+  if(d===0) return {ok:false};
+  const down=d<0||d>2, inRange=!down; // "down" = points-only match
+  if(openOf(meId).length) return {ok:false, reason:"meBusy", inRange, down};
+  if(openOf(tId).length) return {ok:false, reason:"busy", inRange, down};
+  return {ok:true, inRange, down, kind:down?"points":"ladder"};
+}
+
+// ---------- backends ----------
+const CFG = window.SG_CONFIG || {};
+const CONFIGURED = !!(CFG.url && CFG.key && /^(https:\/\/|http:\/\/localhost)/.test(CFG.url));
+const SESSION_KEY = "sg-session";
+function getSession(){ try{ const s=JSON.parse(localStorage.getItem(SESSION_KEY)||"null"); return s&&s.id&&s.pin?s:null; }catch(e){ return null; } }
+function setSession(s){ try{ if(s) localStorage.setItem(SESSION_KEY,JSON.stringify(s)); else localStorage.removeItem(SESSION_KEY); }catch(e){} }
+let SESSION = getSession();
+
+class ApiError extends Error{ constructor(code,msg){ super(msg); this.code=code; } }
+async function rpc(fn, args){
+  let res;
+  try{
+    res = await fetch(CFG.url.replace(/\/+$/,"")+"/rest/v1/rpc/"+fn, {
+      method:"POST",
+      headers:{"Content-Type":"application/json","apikey":CFG.key,"Authorization":"Bearer "+CFG.key},
+      body:JSON.stringify(args||{})
+    });
+  }catch(e){ throw new ApiError("unavailable", t("unavailable")); }
+  const txt = await res.text();
+  let body=null; try{ body = txt?JSON.parse(txt):null; }catch(e){}
+  if(!res.ok){
+    const m = body && body.message;
+    const map = {auth:"wrongPin", taken:"nameTaken", pin:"badPin", name:"enterName"};
+    if(m==="auth" && SESSION && fn!=="sg_login"){ /* stale PIN */ setSession(null); SESSION=null; S.liveMe=null; S.me=null; }
+    throw new ApiError(m||"error", map[m] ? t(map[m]) : (res.status>=500 ? t("unavailable") : t("genericErr")));
+  }
+  return body;
+}
+const liveData={players:{},order:[],challenges:{},names:[]};
+let refreshing=null;
+async function refresh(){
+  if(!CONFIGURED) return;
+  if(refreshing) return refreshing;
+  refreshing = (async()=>{
+    try{
+      const st = await rpc("sg_state", SESSION?{p_id:SESSION.id,p_pin:SESSION.pin}:{});
+      if(SESSION && !st.auth){ setSession(null); SESSION=null; S.liveMe=null; if(S.mode==="live") S.me=null; }
+      liveData.players = st.players||{}; liveData.order = Array.isArray(st.order)?st.order:[];
+      liveData.challenges = st.challenges||{}; liveData.names = st.names||[];
+      const me = SESSION && liveData.players[SESSION.id];
+      S.isOwner = !!(me && me.admin);
+      S.canWrite = !!me;
+      const status=document.getElementById("status"); if(status.dataset.kind==="net"){ status.hidden=true; status.dataset.kind=""; }
+      if(S.mode==="loading") S.mode="live";
+      if(S.mode==="live"){ S.players=liveData.players; S.order=liveData.order; S.challenges=liveData.challenges; S.me=S.liveMe; render(); }
+      fillNames();
+    }catch(e){
+      const status=document.getElementById("status");
+      status.textContent = t("loadErr",{c:e.code||"error"}); status.dataset.kind="net"; status.hidden=false;
+      if(S.mode==="loading"){ S.mode="live"; render(); }
+    }finally{ refreshing=null; }
+  })();
+  return refreshing;
+}
+function cred(){ if(!SESSION) throw new ApiError("auth", t("wrongPin")); return {p_id:SESSION.id, p_pin:SESSION.pin}; }
+const Live = {
+  async join(form){
+    const r = await rpc("sg_register",{p_name:form.name, p_pin:form.pin, p_data:{club:form.club, hcp:form.hcp, contact:form.contact, joinedAt:Date.now()}});
+    SESSION={id:r.id,pin:form.pin}; setSession(SESSION); S.liveMe=r.id; S.me=r.id; await refresh();
+  },
+  async login(id, pin){
+    const name = (liveData.names.find(x=>x.id===id)||{}).name || "";
+    const r = await rpc("sg_login",{p_name:name, p_pin:pin});
+    SESSION={id:r.id,pin}; setSession(SESSION); S.liveMe=r.id; S.me=r.id; await refresh();
+  },
+  async saveProfile(d){ await rpc("sg_save_profile", Object.assign(cred(),{p_data:d})); await refresh(); },
+  async leave(){ await rpc("sg_leave", cred()); setSession(null); SESSION=null; S.liveMe=null; S.me=null; await refresh(); },
+  async saveChallenge(id,d){ const x=Object.assign({},d); delete x.id; await rpc("sg_save_challenge", Object.assign(cred(),{p_cid:id, p_data:x})); await refresh(); },
+  async resetPin(target, pin){ await rpc("sg_reset_pin", Object.assign(cred(),{p_target:target, p_new:pin})); }
+};
+const Demo = {
+  async saveChallenge(id,d){
+    const old=S.challenges[id];
+    if(d.status==="done" && (!old||old.status!=="done") && d.winner===d.challenger && kindOf(d)==="ladder"){
+      const o=S.order.slice(), ci=o.indexOf(d.challenger), di=o.indexOf(d.defender);
+      if(ci>=0 && di>=0 && ci>di){ o.splice(ci,1); o.splice(di,0,d.challenger); S.order=o; }
+    }
+    S.challenges[id]=d; render();
+  }
+};
+function B(){ return S.mode==="demo"?Demo:Live; }
+
+async function run(fn, okMsg){
+  try{ await fn(); if(okMsg) toast(okMsg); }
+  catch(e){ toast((e && e.message) || t("genericErr")); if(S.mode==="live") refresh(); }
+}
+
+// ---------- actions ----------
+async function createChallenge(tId){
+  const el=eligibility(S.me,tId);
+  if(!el.ok) throw new Error(t("cantChallenge"));
+  const id=rid();
+  await B().saveChallenge(id,{id, challenger:S.me, defender:tId, chPos:posOf(S.me), dePos:posOf(tId), kind:el.kind, status:"pending", createdAt:Date.now()});
+}
+async function setStatus(c, patch){ await B().saveChallenge(c.id, Object.assign({}, c, patch)); }
+async function accept(c){
+  if(S.mode==="demo"){
+    for(const o of Object.values(S.challenges)){
+      if(o.id!==c.id && o.status==="pending" && [o.challenger,o.defender].some(x=>x===c.challenger||x===c.defender)){
+        await setStatus(o,{status:"cancelled", note:"The player has already accepted another match.", closedAt:Date.now()});
+      }
+    }
+  }
+  await setStatus(c,{status:"accepted", acceptedAt:Date.now()});
+}
+async function finalize(c, winner, score, how){
+  const chPos=posOf(c.challenger)||c.chPos, dePos=posOf(c.defender)||c.dePos;
+  const loser=winner===c.challenger?c.defender:c.challenger;
+  const points=pointsFor(posOf(winner)||(winner===c.challenger?chPos:dePos), posOf(loser)||(winner===c.challenger?dePos:chPos));
+  await setStatus(c,{status:"done", winner, score, how:how||"played", closedAt:Date.now(), chPos, dePos, points, kind:kindOf(c)});
+}
+
+// ---------- modals ----------
+function closeModal(){ document.getElementById("modal-root").replaceChildren(); }
+function modal(title, body, actions){
+  const root=document.getElementById("modal-root");
+  const box=h("div",{class:"modal",role:"dialog","aria-modal":"true","aria-label":title}, h("h2",{text:title}), body, h("div",{class:"row-actions"}, actions));
+  const ov=h("div",{class:"overlay",onclick:e=>{ if(e.target===ov) closeModal(); }}, box);
+  root.replaceChildren(ov);
+}
+function confirmModal(title, text, label, fn, cls){
+  modal(title, h("p",{style:"margin:0",text}), [
+    h("button",{class:"btn "+(cls||"primary"), onclick:async e=>{ e.target.disabled=true; await fn(); closeModal(); }, text:label}),
+    h("button",{class:"btn ghost", onclick:closeModal, text:t("cancel")})
+  ]);
+}
+function reportModal(c){
+  const opp = c.challenger===S.me ? c.defender : c.challenger;
+  const win = h("select",{id:"m-win"}, h("option",{value:S.me,text:t("iWon")}), h("option",{value:opp,text:t("oppWon",{n:pname(opp)})}));
+  const sc = h("select",{id:"m-score"}, SCORES.map(s=>h("option",{value:s,text:scoreLabel(s)})));
+  const body=h("div",{class:"form"},
+    h("div",{class:"field"}, h("label",{for:"m-win",text:t("winner")}), win),
+    h("div",{class:"field"}, h("label",{for:"m-score",text:t("result")}), sc),
+    h("p",{class:"small muted",style:"grid-column:1/-1;margin:0",text:t("confirmNote")}));
+  modal(t("enterResultTitle"), body, [
+    h("button",{class:"btn primary",onclick:async e=>{ e.target.disabled=true;
+      await run(()=>setStatus(c,{status:"reported", winner:win.value, score:sc.value, reportedBy:S.me, reportedAt:Date.now()}),t("resultSent")); closeModal(); }, text:t("sendResult")}),
+    h("button",{class:"btn ghost",onclick:closeModal,text:t("cancel")})
+  ]);
+}
+function profileModal(){
+  const p=S.players[S.me]; if(!p) return;
+  const f=(id,lab,val)=>h("div",{class:"field"},h("label",{for:id,text:lab}),h("input",{id,value:val||"",maxlength:"80"}));
+  const parts=[h("div",{class:"form"}, f("p-name",t("fName"),p.name), f("p-club",t("fClub"),p.club), f("p-hcp",t("fHcpShort"),p.hcp), f("p-contact",t("fContactShort"),p.contact))];
+  if(S.isOwner){
+    const others=ladder().filter(x=>x!==S.me);
+    if(others.length){
+      const sel=h("select",{id:"rp-who"}, others.map(id=>h("option",{value:id,text:pname(id)})));
+      const pin=h("input",{id:"rp-pin",inputmode:"numeric",maxlength:"8"});
+      parts.push(h("div",{class:"mp-sec"}, h("h3",{text:t("organiser")+" · "+t("resetPin")}),
+        h("div",{class:"form"}, h("div",{class:"field"},h("label",{for:"rp-who",text:t("player")}),sel), h("div",{class:"field"},h("label",{for:"rp-pin",text:t("newPin")}),pin)),
+        h("div",{class:"row-actions"}, h("button",{class:"btn",onclick:async e=>{
+          if(!/^[0-9]{4,8}$/.test(pin.value)){ toast(t("badPin")); return; }
+          e.target.disabled=true; await run(()=>Live.resetPin(sel.value,pin.value),t("pinReset")); e.target.disabled=false; pin.value=""; }, text:t("resetPin")}))));
+    }
+  }
+  modal(t("myProfile"), h("div",{class:"section"},parts), [
+    h("button",{class:"btn primary",onclick:async ()=>{
+      const v=k=>document.getElementById(k).value.trim();
+      if(v("p-name").length<2){ toast(t("enterName")); return; }
+      await run(()=>Live.saveProfile(Object.assign({},p,{name:v("p-name"),club:v("p-club"),hcp:v("p-hcp").replace(",","."),contact:v("p-contact")})),t("profileSaved")); closeModal(); }, text:t("save")}),
+    h("button",{class:"btn",onclick:()=>{ setSession(null); SESSION=null; S.liveMe=null; S.me=null; S.isOwner=false; S.canWrite=false; closeModal(); refresh(); toast(t("signedOut")); }, text:t("signOut")}),
+    h("button",{class:"btn ghost danger",onclick:()=>confirmModal(t("leaveTitle"),t("leaveText"),t("leave"),()=>run(()=>Live.leave(),t("leftMsg")),"flag"), text:t("leaveTitle")}),
+    h("button",{class:"btn ghost",onclick:closeModal,text:t("close")})
+  ]);
+}
+
+// ---------- render ----------
+const TABS=[["lestvica","tLadder"],["izzivi","tChallenges"],["tocke","tPoints"],["rezultati","tResults"],["pravila","tRules"]];
+function myActionCount(){
+  if(!S.me) return 0;
+  return openOf(S.me).filter(c => (c.status==="pending" && c.defender===S.me) || (c.status==="reported" && c.reportedBy!==S.me)).length;
+}
+function render(){
+  const me=S.me, registered = !!(me && S.players[me] && ladder().includes(me));
+  // banner
+  const ban=document.getElementById("banner");
+  if(S.mode==="demo"){
+    const sel=h("select",{id:"demo-me","aria-label":t("playAs"),onchange:e=>{ S.demoMe=e.target.value; S.me=S.demoMe; render(); }},
+      ladder().map((id,i)=>h("option",{value:id,selected:id===S.me,text:(i+1)+". "+pname(id)})));
+    ban.replaceChildren(h("div",{class:"banner"},
+      h("span",null,h("b",{text:t("testMode")}),t("testModeDesc")),
+      h("label",{for:"demo-me",text:t("playAs")}), sel, h("span",{class:"sp"}),
+      S.live ? h("button",{class:"btn",onclick:()=>switchMode("live"),text:t("backReal")}) : h("span",{class:"small",text:t("realAvailable")})));
+  } else if(S.mode==="live"){
+    ban.replaceChildren(h("div",{class:"banner"},
+      h("span",null,t("tryFirst")), h("span",{class:"sp"}),
+      h("button",{class:"btn",onclick:()=>switchMode("demo"),text:t("testMode")})));
+  } else ban.replaceChildren();
+
+  // me card
+  const mc=document.getElementById("mecard");
+  if(registered){
+    const st=stats(me);
+    mc.replaceChildren(h("button",{class:"mecard",style:"cursor:pointer;text-align:left",onclick:()=>S.mode==="live"?profileModal():null,title:S.mode==="live"?t("editProfile"):""},
+      h("div",{class:"pos",text:posOf(me)+"."}),
+      h("div",null, h("div",{class:"nm",text:pname(me)}), h("div",{class:"small muted",text:t("meStats")(st.pts,st.w,st.l)}))));
+  } else mc.replaceChildren();
+
+  // registration
+  const reg=document.getElementById("reg");
+  reg.hidden = !(S.mode==="live" && !registered);
+
+  // tabs
+  const n=myActionCount();
+  document.getElementById("tabs").replaceChildren(...TABS.map(([k,l])=>h("button",{class:"tab",role:"tab","aria-selected":String(S.tab===k),onclick:()=>{S.tab=k; try{localStorage.setItem("sg-tab",k);}catch(e){} render();}}, t(l), k==="izzivi"&&n?h("span",{class:"cnt",text:n}):null)));
+
+  const v=document.getElementById("view");
+  if(S.mode==="loading"){ v.replaceChildren(h("div",{class:"card empty",text:t("loading")})); return; }
+  const fn={lestvica:vLadder, izzivi:vChallenges, rezultati:vResults, tocke:vPoints, pravila:vRules}[S.tab]||vLadder;
+  v.replaceChildren(fn());
+}
+
+function vLadder(){
+  const L=ladder();
+  if(!L.length) return h("div",{class:"card empty"}, h("h3",{text:t("emptyTitle")}), h("p",{text:t("emptyText")}));
+  const myOpen = S.me ? openOf(S.me) : [];
+  return h("div",{class:"ladder"}, L.map((id,i)=>{
+    const p=S.players[id], st=stats(id), isMe=id===S.me;
+    const el = S.me && !isMe ? eligibility(S.me,id) : {ok:false};
+    const busy = openOf(id).some(c=>c.status!=="pending") ? t("inMatch") : openOf(id).length ? t("hasOpen") : null;
+    let action=null;
+    if(el.ok && S.canWrite) action=h("button",{class:"btn flag",onclick:()=>confirmModal(t("challengeTitle",{n:pname(id)}),
+        t("challengeText",{pos:ord(i+1),d:ACCEPT_DAYS}),
+        t("sendChallenge"), ()=>run(()=>createChallenge(id),t("challengeSent")),"flag"), text:t("challengeBtn")});
+    else if(el.inRange) action=h("button",{class:"btn",disabled:true,title:el.reason==="meBusy"?t("meBusyTip"):t("busyTip"),text:t("challengeBtn")});
+    if(el.ok && el.down && S.canWrite){
+      const win=pointsFor(posOf(S.me),i+1), lose=pointsFor(i+1,posOf(S.me));
+      action=h("button",{class:"btn ghost",onclick:()=>confirmModal(t("pmTitle",{n:pname(id)}),
+        t("pmText")(ord(i+1),win,lose),
+        t("sendInvite"), ()=>run(()=>createChallenge(id),t("inviteSent")),"primary"), text:t("pmBtn",{w:win})});
+    }
+    return h("div",{class:"rung"+(isMe?" me":"")+(el.inRange?" reach":"")},
+      h("div",{class:"n",text:i+1}),
+      h("div",{class:"who"},
+        h("div",{class:"nm",text:p.name}),
+        h("div",{class:"meta"},
+          p.club?h("span",{text:p.club}):null,
+          p.hcp?h("span",{class:"mono",text:"HCP "+p.hcp}):null,
+          h("span",{class:"mono",text:`${st.w}–${st.l}`}),
+          h("span",{class:"mono pts",text:t("pts",{p:st.pts})}))),
+      h("div",{class:"right"},
+        h("div",{class:"row-actions"},
+          isMe?h("span",{class:"chip you",text:t("you")}):null,
+          el.inRange?h("span",{class:"chip reach",text:t("inRange",{p:pointsFor(posOf(S.me),i+1)})}):null,
+          busy?h("span",{class:"chip busy",text:busy}):null),
+        action));
+  }));
+}
+
+function duelCard(c, withActions){
+  const me=S.me, mine = c.challenger===me || c.defender===me;
+  const side=(id,pos,lab,r)=>h("div",{class:"side"+(r?" r":"")}, h("span",{class:"small muted",text:lab+(pos?" · "+t("place",{pos:ord(pos)}):"")}), h("span",{class:"nm",text:pname(id)}));
+  const L={pending:[t("stPending"),"busy"],accepted:[t("stAccepted"),"ok"],reported:[t("stReported"),"busy"]}[c.status]||["",""];
+  const line=[h("span",{class:"chip "+L[1],text:L[0]})];
+  if(kindOf(c)==="points") line.unshift(h("span",{class:"chip mut",text:t("pointsMatch")}));
+  const acts=[];
+  const oppId = c.challenger===me ? c.defender : c.challenger;
+  if(c.status==="pending"){
+    const dl=daysLeft(c.createdAt,ACCEPT_DAYS);
+    line.push(h("span",{text: dl>0?t("daysLeft")(dl):t("acceptPassed")}));
+    if(withActions && c.defender===me){
+      acts.push(h("button",{class:"btn primary",onclick:()=>run(()=>accept(c),t("acceptedMsg")),text:t("accept")}));
+      if(kindOf(c)==="ladder") acts.push(h("button",{class:"btn",onclick:()=>confirmModal(t("declineTitle"),t("declineText"),t("declineConcede"),()=>run(()=>finalize(c,c.challenger,"conceded","forfeit"),t("declined")),"flag"),text:t("decline")}));
+      else acts.push(h("button",{class:"btn",onclick:()=>run(()=>setStatus(c,{status:"cancelled",note:"Points match declined.",closedAt:Date.now()}),t("pmDeclined")),text:t("decline")}));
+    }
+    if(withActions && c.challenger===me){
+      if(dl<=0 && kindOf(c)==="ladder") acts.push(h("button",{class:"btn flag",onclick:()=>confirmModal(t("woTitle"),t("woText"),t("confirmWin"),()=>run(()=>finalize(c,me,"walkover","noshow"),t("woRecorded"))),text:t("claimWo")}));
+      acts.push(h("button",{class:"btn ghost",onclick:()=>confirmModal(t("wdTitle"),t("wdText"),t("wdTitle"),()=>run(()=>setStatus(c,{status:"cancelled",note:"The challenger withdrew the challenge.",closedAt:Date.now()}),t("wdDone"))),text:t("withdraw")}));
+    }
+  }
+  if(c.status==="accepted"){
+    const dl=daysLeft(c.acceptedAt||c.createdAt,PLAY_DAYS);
+    line.push(h("span",{text: dl>0?t("playBy",{d:fmtDate((c.acceptedAt||c.createdAt)+PLAY_DAYS*DAY)}):t("playPassed")}));
+    if(withActions && mine) acts.push(h("button",{class:"btn primary",onclick:()=>reportModal(c),text:t("enterResult")}));
+  }
+  if(c.status==="reported"){
+    line.push(h("span",{text:t("enteredBy",{r:pname(c.reportedBy),w:pname(c.winner),s:scoreLabel(c.score)})}));
+    if(withActions && mine && c.reportedBy!==me){
+      acts.push(h("button",{class:"btn primary",onclick:()=>run(()=>finalize(c,c.winner,c.score,"played"),t("confirmed")),text:t("confirmResult")}));
+      acts.push(h("button",{class:"btn",onclick:()=>run(()=>setStatus(c,{status:"accepted",winner:null,score:null,reportedBy:null,note:"Result disputed."}),t("disputed")),text:t("wrongResult")}));
+    }
+  }
+  if(withActions && mine && S.mode==="live"){
+    const opp=S.players[oppId];
+    if(opp && opp.contact) line.push(h("span",null,t("contact"),h("b",{class:"mono",text:opp.contact})));
+  }
+  if(S.isOwner && S.mode==="live" && !mine) acts.push(h("button",{class:"btn ghost danger",onclick:()=>confirmModal(t("orgTitle"),t("orgText"),t("orgTitle"),()=>run(()=>setStatus(c,{status:"cancelled",note:"The organiser cancelled the challenge.",closedAt:Date.now()}),t("orgCancelled")),"flag"),text:t("orgBtn")}));
+  return h("div",{class:"card"},
+    h("div",{class:"duel"}, side(c.challenger,posOf(c.challenger),t("challenger")), h("div",{class:"vs",text:"vs"}), side(c.defender,posOf(c.defender),t("defender"),true)),
+    h("div",{class:"status-line"}, line),
+    acts.length?h("div",{class:"row-actions"},acts):null);
+}
+
+function vChallenges(){
+  const all=Object.values(S.challenges).filter(c=>OPEN.includes(c.status)).sort((a,b)=>b.createdAt-a.createdAt);
+  const mine=S.me?all.filter(c=>c.challenger===S.me||c.defender===S.me):[];
+  const others=all.filter(c=>!mine.includes(c));
+  const out=h("div",{class:"section"});
+  out.append(h("h2",{text:t("myMatches")}));
+  if(mine.length) out.append(h("div",{class:"list"}, mine.map(c=>duelCard(c,true))));
+  else {
+    const L=ladder(), mi=L.indexOf(S.me);
+    const targets = mi>0 ? L.slice(Math.max(0,mi-2),mi) : [];
+    out.append(h("div",{class:"card empty"}, mi<0 ? t("joinToChallenge") :
+      mi===0 ? t("atTop") :
+      t("canChallenge",{n:targets.map(x=>pname(x)).join(t("or"))})));
+  }
+  out.append(h("h2",{text:t("otherMatches")}));
+  out.append(others.length?h("div",{class:"list"},others.map(c=>duelCard(c,false))):h("div",{class:"card empty",text:t("noOther")}));
+  return out;
+}
+
+function vResults(){
+  const done=Object.values(S.challenges).filter(c=>c.status==="done").sort((a,b)=>(b.closedAt||0)-(a.closedAt||0));
+  if(!done.length) return h("div",{class:"card empty",text:t("noResults")});
+  return h("div",{class:"ladder"}, done.map(c=>{
+    const chWon=c.winner===c.challenger, loser=chWon?c.defender:c.challenger;
+    const how = c.how==="forfeit"?t("defConceded"): c.how==="noshow"?t("defNoAccept"):"";
+    return h("div",{class:"res"},
+      h("div",null,
+        h("div",{style:"font-weight:600",text:t("beat",{w:pname(c.winner),l:pname(loser)})}),
+        h("div",{class:"meta"},
+          h("span",{text:fmtDate(c.closedAt)}),
+          kindOf(c)==="points" ? h("span",{text:t("pmUnchanged")}) : chWon ? h("span",{class:"move-up",text:t("movedUp",{a:ord(c.chPos),b:ord(c.dePos)})}) : h("span",{text:t("defKeeps")}),
+          how?h("span",{text:how}):null)),
+      h("div",{class:"score"}, h("div",{text:scoreLabel(c.score)}), h("div",{class:"small",text:"+"+t("pts",{p:ptsOf(c)})})));
+  }));
+}
+
+function vPoints(){
+  const L=ladder();
+  if(!L.length) return h("div",{class:"card empty",text:t("noPlayers")});
+  const rows=L.map(id=>({id,pos:posOf(id),st:stats(id)})).sort((a,b)=>b.st.pts-a.st.pts||a.pos-b.pos);
+  let rank=0, prev=null;
+  return h("div",{class:"section"},
+    h("div",{class:"ladder"}, rows.map((r,i)=>{
+      if(r.st.pts!==prev){ rank=i+1; prev=r.st.pts; }
+      return h("div",{class:"rung"+(r.id===S.me?" me":"")},
+        h("div",{class:"n",text:rank}),
+        h("div",{class:"who"}, h("div",{class:"nm",text:pname(r.id)}),
+          h("div",{class:"meta"}, h("span",{text:t("ladderPos",{p:ord(r.pos)})}), h("span",{class:"mono",text:`${r.st.w}–${r.st.l}`}))),
+        h("div",{class:"right"}, h("div",{class:"score-big mono",text:t("pts",{p:r.st.pts})})));
+    })),
+    h("p",{class:"small muted",style:"margin:0",text:t("pointsLegend")}));
+}
+
+function vRules(){
+  const rules=t("rules"), M=MP[LANG]||MP.en;
+  return h("div",{class:"section"},
+    h("div",{class:"card"},
+      h("div",{class:"mp-head"},
+        h("div",null, h("h2",{text:M.title}), h("p",{class:"muted",style:"margin:4px 0 0",text:M.intro})),
+        h("div",{class:"row-actions"}, h("span",{class:"chip mut",text:M.count}), h("span",{class:"chip bad",text:M.badge}))),
+      h("div",{class:"mp-grid"}, M.s.map((sec,i)=>h("div",{class:"mp-sec"},
+        h("h3",null, h("span",{class:"mp-n mono",text:i+1}), h("span",{text:sec[0]})),
+        h("ul",null, sec[1].map(x=>h("li",{text:x}))),
+        sec[2]?h("p",{class:"mp-note",text:sec[2]}):null)))),
+    h("div",{class:"card"},
+      h("h2",{text:t("rulesTitle")}),
+      h("ol",{class:"rules"}, rules.map(r=>h("li",{text:r.replace("{a}",ACCEPT_DAYS).replace("{p}",PLAY_DAYS)})))));
+}
+
+// ---------- demo data ----------
+function loadDemo(){
+  const names=[["Luka Kranjc","GK Bled","4.1"],["Ana Novak","GK Arboretum","7.8"],["Matej Zupan","GC Ljubljana","9.3"],["Nina Horvat","GK Otočec","11.0"],["Jure Kos","GK Bovec","12.6"],["Tina Vidmar","GK Trnovo","15.2"],["Rok Golob","GK Mokrice","18.4"],["Petra Mlakar","GK Bled","21.9"]];
+  const P={}, order=[];
+  names.forEach((n,i)=>{ const id="demo"+i; P[id]={base:n[0],name:n[0]+t("sample"),club:n[1],hcp:n[2],joinedAt:Date.now()}; order.push(id); });
+  const now=Date.now();
+  const C={
+    c1:{id:"c1",challenger:"demo2",defender:"demo1",chPos:3,dePos:2,status:"done",winner:"demo1",score:"3&2",how:"played",points:3,createdAt:now-20*DAY,closedAt:now-12*DAY},
+    c2:{id:"c2",challenger:"demo5",defender:"demo3",chPos:6,dePos:4,status:"done",winner:"demo5",score:"1 up",how:"played",points:5,createdAt:now-14*DAY,closedAt:now-6*DAY},
+    c3:{id:"c3",challenger:"demo6",defender:"demo5",chPos:7,dePos:6,status:"accepted",createdAt:now-3*DAY,acceptedAt:now-2*DAY},
+    c4:{id:"c4",challenger:"demo4",defender:"demo2",chPos:5,dePos:3,status:"pending",createdAt:now-1*DAY}
+  };
+  // apply c2 result to order: demo5 jumped from 6 to 4
+  const o=order.slice(); o.splice(5,1); o.splice(3,0,"demo5");
+  // ladder now: 0,1,2,5,3,4,6,7  -> fix c3/c4 positions to match
+  C.c3.challenger="demo4"; C.c3.chPos=6; C.c3.dePos=4; C.c4.challenger="demo3"; C.c4.chPos=5; C.c4.defender="demo2"; C.c4.dePos=3;
+  S.players=P; S.order=o; S.challenges=C;
+  if(!S.demoMe) S.demoMe="demo2";
+  S.me=S.demoMe;
+}
+function relabelDemo(){ for(const id in S.players){ const p=S.players[id]; if(p.base) p.name=p.base+t("sample"); } }
+function switchMode(m){
+  closeModal();
+  if(m==="demo"){ S.mode="demo"; loadDemo(); }
+  else { S.mode="live"; S.players=liveData.players; S.order=liveData.order; S.challenges=liveData.challenges; S.me=S.liveMe; }
+  render();
+}
+
+// ---------- join / sign in ----------
+let regPane = "join";
+function setPane(p){
+  regPane=p;
+  document.getElementById("seg-join").setAttribute("aria-selected",String(p==="join"));
+  document.getElementById("seg-in").setAttribute("aria-selected",String(p==="in"));
+  document.getElementById("pane-join").hidden = p!=="join";
+  document.getElementById("pane-in").hidden = p!=="in";
+}
+document.getElementById("seg-join").addEventListener("click",()=>setPane("join"));
+document.getElementById("seg-in").addEventListener("click",()=>setPane("in"));
+function fillNames(){
+  const sel=document.getElementById("i-name"), cur=sel.value;
+  sel.replaceChildren(h("option",{value:"",text:t("pickName")}), ...liveData.names.map(x=>h("option",{value:x.id,text:x.name})));
+  if(cur) sel.value=cur;
+}
+document.getElementById("regform").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const btn=document.getElementById("r-submit"), err=document.getElementById("r-err");
+  err.hidden=true; btn.disabled=true;
+  const v=id=>document.getElementById(id).value.trim();
+  try{
+    if(v("r-name").length<2) throw new Error(t("enterName"));
+    if(!/^[0-9]{4,8}$/.test(v("r-pin"))) throw new Error(t("badPin"));
+    await Live.join({name:v("r-name"), pin:v("r-pin"), club:v("r-club"), hcp:v("r-hcp").replace(",","."), contact:v("r-contact")});
+    e.target.reset(); toast(t("welcome"));
+  }catch(ex){
+    if(ex && ex.code==="taken") setPane("in");
+    err.textContent = (ex && ex.message) || t("joinFailed"); err.hidden=false;
+    if(ex && ex.code==="taken"){ document.getElementById("i-err").textContent=ex.message; document.getElementById("i-err").hidden=false; }
+  }finally{ btn.disabled=false; }
+});
+document.getElementById("inform").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const btn=document.getElementById("i-submit"), err=document.getElementById("i-err");
+  err.hidden=true; btn.disabled=true;
+  try{
+    const id=document.getElementById("i-name").value, pin=document.getElementById("i-pin").value.trim();
+    if(!id) throw new Error(t("pickName"));
+    await Live.login(id,pin);
+    e.target.reset(); toast(t("welcomeBack"));
+  }catch(ex){ err.textContent=(ex && ex.message) || t("genericErr"); err.hidden=false; }
+  finally{ btn.disabled=false; }
+});
+
+// ---------- install hint ----------
+let deferredPrompt=null;
+const standalone = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone===true;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+function hintHidden(){ try{ return localStorage.getItem("sg-install-hide")==="1"; }catch(e){ return false; } }
+function renderInstall(){
+  const box=document.getElementById("install");
+  const mobile = isIOS || /android/i.test(navigator.userAgent) || deferredPrompt;
+  box.hidden = standalone || hintHidden() || !mobile;
+  document.getElementById("install-text").textContent = isIOS ? t("installIos") : t("installAndroid");
+  document.getElementById("install-btn").hidden = !deferredPrompt;
+}
+window.addEventListener("beforeinstallprompt", e=>{ e.preventDefault(); deferredPrompt=e; renderInstall(); });
+document.getElementById("install-btn").addEventListener("click", async ()=>{ if(!deferredPrompt) return; deferredPrompt.prompt(); try{ await deferredPrompt.userChoice; }catch(e){} deferredPrompt=null; renderInstall(); });
+document.getElementById("install-hide").addEventListener("click", ()=>{ try{ localStorage.setItem("sg-install-hide","1"); }catch(e){} renderInstall(); });
+if("serviceWorker" in navigator && location.protocol==="https:"){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+
+// ---------- boot ----------
+const _applyStatic = applyStatic;
+applyStatic = function(){ _applyStatic(); renderInstall(); fillNames(); };
+setPane("join");
+applyStatic();
+render();
+if(!CONFIGURED){
+  S.live=null; switchMode("demo");
+  const st=document.getElementById("status"); st.textContent=t("notConfigured"); st.hidden=false;
+} else {
+  S.live=Live; S.liveMe = SESSION ? SESSION.id : null; S.me=S.liveMe;
+  S.canWrite=!!SESSION;
+  refresh();
+  setInterval(()=>{ if(document.visibilityState==="visible" && S.mode==="live" && !document.querySelector(".overlay")) refresh(); }, 10000);
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") refresh(); });
+  window.addEventListener("online",()=>refresh());
+}
+
+})();
+</script>
+</body>
+</html>

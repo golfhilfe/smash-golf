@@ -1,0 +1,15 @@
+{
+  "name": "Smash Golf",
+  "short_name": "Smash Golf",
+  "description": "Open matchplay ladder",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef2ea",
+  "theme_color": "#1d6a43",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
