@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -173,9 +173,9 @@ body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset
     </div>
     <div class="top-right">
       <div class="langs" role="group" aria-label="Language" id="langs">
+        <button type="button" class="lang" data-lang="de">DE</button>
         <button type="button" class="lang" data-lang="en">EN</button>
         <button type="button" class="lang" data-lang="sl">SL</button>
-        <button type="button" class="lang" data-lang="de">DE</button>
         <button type="button" class="lang" data-lang="it">IT</button>
       </div>
       <div id="mecard"></div>
@@ -547,8 +547,8 @@ it:{title:"Regole del match play", intro:"Regole di base (specifiche) del match 
   ["Concessione",["Un giocatore può concedere in qualsiasi momento il colpo successivo (given) per chiudere la buca.","Un giocatore può concedere una buca in qualsiasi momento dopo il colpo di partenza.","Un giocatore può concedere il MATCH in qualsiasi momento."]]
  ]}
 };
-const LANGS=["en","sl","de","it"];
-let LANG="en";
+const LANGS=["de","en","sl","it"];
+let LANG="de";
 try{ const l=localStorage.getItem("sg-lang"); if(LANGS.includes(l)) LANG=l; else { const n=(navigator.language||"").slice(0,2).toLowerCase(); if(LANGS.includes(n)) LANG=n; } }catch(e){}
 function t(k, v){
   let s = (I18N[LANG][k]!==undefined) ? I18N[LANG][k] : I18N.en[k];
