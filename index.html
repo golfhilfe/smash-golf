@@ -240,7 +240,7 @@ en:{
   regIntro:"New players start at the bottom of the ladder. From there you challenge players one or two places above you and climb by winning.",
   fName:"Full name", fClub:"Home club", fHcp:"Handicap (HCP)", fContact:"Contact for arranging matches", fHcpShort:"Handicap", fContactShort:"Contact",
   phClub:"Search or type your club", phHcp:"e.g. 14.2", phContact:"phone or email", join:"Join",
-  contactNote:"Only registered players see your contact, so you can arrange a tee time.",
+  contactNote:"Only your current opponent and the organiser see your contact, so you can arrange a tee time.", pinLocked:"Too many wrong PINs. This sign-in is locked for an hour. The organiser can reset your PIN.",
   busyLadder:"Someone else is updating the ladder right now. Try again in a few seconds.",
   genericErr:"Something went wrong.", noPerm:"You don't have permission to change the competition. The organiser needs to give you edit access.",
   unavailable:"The server can't be reached right now. Try again.", quota:"The competition database is full. Let the organiser know.",
@@ -308,7 +308,7 @@ sl:{
   regIntro:"Novi igralci začnejo na dnu lestvice. Od tam izzivaš igralce eno ali dve mesti nad sabo in se z zmagami vzpenjaš.",
   fName:"Ime in priimek", fClub:"Matični klub", fHcp:"Hendikep (HCP)", fContact:"Kontakt za dogovor", fHcpShort:"Hendikep", fContactShort:"Kontakt",
   phClub:"Poiščite ali vpišite klub", phHcp:"npr. 14,2", phContact:"telefon ali e-pošta", join:"Prijavi me",
-  contactNote:"Kontakt vidijo samo prijavljeni igralci, da se lahko dogovorite za termin.",
+  contactNote:"Kontakt vidita samo tvoj trenutni nasprotnik in organizator, da se lahko dogovorita za termin.", pinLocked:"Preveč napačnih PIN-ov. Prijava je za eno uro zaklenjena. Organizator ti lahko ponastavi PIN.",
   busyLadder:"Lestvico prav zdaj posodablja nekdo drug. Poskusi znova čez nekaj sekund.",
   genericErr:"Nekaj je šlo narobe.", noPerm:"Nimaš pravice spreminjati tekmovanja. Organizator ti mora dati dostop za urejanje.",
   unavailable:"Strežnik trenutno ni dosegljiv. Poskusi znova.", quota:"Baza tekmovanja je polna. Obvesti organizatorja.",
@@ -376,7 +376,7 @@ de:{
   regIntro:"Neue Spieler starten unten auf der Leiter. Von dort forderst du Spieler heraus, die ein oder zwei Plätze über dir stehen, und steigst mit Siegen auf.",
   fName:"Vor- und Nachname", fClub:"Heimatclub", fHcp:"Handicap (HCP)", fContact:"Kontakt für Terminabsprachen", fHcpShort:"Handicap", fContactShort:"Kontakt",
   phClub:"Club suchen oder eintippen", phHcp:"z. B. 14,2", phContact:"Telefon oder E-Mail", join:"Anmelden",
-  contactNote:"Deinen Kontakt sehen nur angemeldete Spieler, damit ihr einen Termin vereinbaren könnt.",
+  contactNote:"Deinen Kontakt sehen nur dein aktueller Gegner und der Organisator, damit ihr einen Termin vereinbaren könnt.", pinLocked:"Zu viele falsche PINs. Die Anmeldung ist für eine Stunde gesperrt. Der Organisator kann deine PIN zurücksetzen.",
   busyLadder:"Gerade aktualisiert jemand anderes die Leiter. Versuche es in ein paar Sekunden erneut.",
   genericErr:"Etwas ist schiefgelaufen.", noPerm:"Du darfst den Wettbewerb nicht ändern. Der Organisator muss dir Bearbeitungsrechte geben.",
   unavailable:"Der Server ist gerade nicht erreichbar. Versuche es erneut.", quota:"Die Datenbank des Wettbewerbs ist voll. Informiere den Organisator.",
@@ -444,7 +444,7 @@ it:{
   regIntro:"I nuovi giocatori partono dal fondo della classifica. Da lì sfidi i giocatori una o due posizioni sopra di te e sali vincendo.",
   fName:"Nome e cognome", fClub:"Circolo di appartenenza", fHcp:"Handicap (HCP)", fContact:"Contatto per accordarsi", fHcpShort:"Handicap", fContactShort:"Contatto",
   phClub:"Cerca o scrivi il circolo", phHcp:"es. 14,2", phContact:"telefono o e-mail", join:"Iscriviti",
-  contactNote:"Il tuo contatto è visibile solo ai giocatori iscritti, così potete fissare un orario di partenza.",
+  contactNote:"Il tuo contatto è visibile solo al tuo avversario attuale e all'organizzatore, così potete fissare un orario di partenza.", pinLocked:"Troppi PIN errati. L'accesso è bloccato per un'ora. L'organizzatore può reimpostare il tuo PIN.",
   busyLadder:"Qualcun altro sta aggiornando la classifica. Riprova tra qualche secondo.",
   genericErr:"Qualcosa è andato storto.", noPerm:"Non hai il permesso di modificare la competizione. L'organizzatore deve darti l'accesso in modifica.",
   unavailable:"Il server non è raggiungibile in questo momento. Riprova.", quota:"Il database della competizione è pieno. Avvisa l'organizzatore.",
@@ -571,7 +571,8 @@ function hcpNum(v){ if(v==null) return null; const t=String(v).trim().replace(",
 function strokesFor(a,b,holes){ return Math.floor(Math.abs(a-b)*0.75*holes/18+0.5+1e-9); }
 function strokesText(c){
   const pa=S.players[c.challenger], pb=S.players[c.defender]; if(!pa||!pb) return null;
-  const a=hcpNum(pa.hcp), b=hcpNum(pb.hcp); if(a==null||b==null) return null;
+  // handicaps are frozen when the match is accepted (chHcp/deHcp), so later profile changes don't add strokes
+  const a=hcpNum(c.chHcp!=null?c.chHcp:pa.hcp), b=hcpNum(c.deHcp!=null?c.deHcp:pb.hcp); if(a==null||b==null) return null;
   const s=strokesFor(a,b,18); if(!s) return t("noStrokes");
   return t("strokesLine",{n:pname(a>b?c.challenger:c.defender), s, s9:strokesFor(a,b,9), s27:strokesFor(a,b,27)});
 }
@@ -697,7 +698,7 @@ async function rpc(fn, args, token){
   let body=null; try{ body = txt?JSON.parse(txt):null; }catch(e){}
   if(!res.ok){
     const m = body && body.message;
-    const map = {auth:"wrongPin", taken:"nameTaken", pin:"badPin", name:"enterName", nomatch:"noMatch"};
+    const map = {auth:"wrongPin", locked:"pinLocked", busy:"cantChallenge", taken:"nameTaken", pin:"badPin", name:"enterName", nomatch:"noMatch"};
     if(m==="auth" && SESSION && fn!=="sg_login"){ /* stale PIN */ setSession(null); SESSION=null; S.liveMe=null; S.me=null; }
     throw new ApiError(m||"error", map[m] ? t(map[m]) : (res.status>=500 ? t("unavailable") : t("genericErr")));
   }
@@ -726,7 +727,7 @@ async function refresh(){
   refreshing = (async()=>{
     try{
       const st = await rpc("sg_state", SESSION?{p_id:SESSION.id,p_pin:SESSION.pin}:{});
-      if(SESSION && !st.auth){ setSession(null); SESSION=null; S.liveMe=null; if(S.mode==="live") S.me=null; }
+      if(SESSION && st.auth===false){ setSession(null); SESSION=null; S.liveMe=null; if(S.mode==="live") S.me=null; }
       liveData.players = st.players||{}; liveData.order = Array.isArray(st.order)?st.order:[];
       liveData.challenges = st.challenges||{}; liveData.names = st.names||[];
       const me = SESSION && liveData.players[SESSION.id];
@@ -753,6 +754,7 @@ const Live = {
   async login(id, pin){
     const name = (liveData.names.find(x=>x.id===id)||{}).name || "";
     const r = await rpc("sg_login",{p_name:name, p_pin:pin});
+    if(!r || r.error || !r.id) throw new ApiError((r&&r.error)||"auth", t(r&&r.error==="locked"?"pinLocked":"wrongPin"));
     SESSION={id:r.id,pin}; setSession(SESSION); S.liveMe=r.id; S.me=r.id; await refresh();
   },
   async saveProfile(d){ await rpc("sg_save_profile", Object.assign(cred(),{p_data:d})); await refresh(); },
