@@ -206,7 +206,8 @@ body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset
         <div class="field"><label for="r-club" data-i18n="fClub"></label><input id="r-club" maxlength="60" data-i18n-ph="phClub"></div>
         <div class="field"><label for="r-hcp" data-i18n="fHcp"></label><input id="r-hcp" inputmode="decimal" maxlength="5" data-i18n-ph="phHcp"></div>
         <div class="field"><label for="r-contact" data-i18n="fContact"></label><input id="r-contact" maxlength="80" data-i18n-ph="phContact"></div>
-        <p class="small muted" style="grid-column:1/-1;margin:0"><span data-i18n="pinNote"></span> <span data-i18n="contactNote"></span></p>
+        <div class="field"><label for="r-email" data-i18n="fEmail"></label><input id="r-email" type="email" inputmode="email" autocomplete="email" maxlength="120" data-i18n-ph="phEmail"></div>
+        <p class="small muted" style="grid-column:1/-1;margin:0"><span data-i18n="pinNote"></span> <span data-i18n="emailNote"></span> <span data-i18n="contactNote"></span></p>
         <div class="row-actions" style="grid-column:1/-1"><button class="btn primary" type="submit" id="r-submit" data-i18n="join"></button></div>
         <div id="r-err" class="err" hidden style="grid-column:1/-1"></div>
       </form>
@@ -217,7 +218,7 @@ body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset
       <form id="inform" class="form" autocomplete="off">
         <div class="field"><label for="i-name" data-i18n="fName"></label><select id="i-name" required></select></div>
         <div class="field"><label for="i-pin" data-i18n="fPin"></label><input id="i-pin" required inputmode="numeric" pattern="[0-9]*" maxlength="8" type="password" autocomplete="current-password"></div>
-        <div class="row-actions" style="grid-column:1/-1;align-items:center"><button class="btn primary" type="submit" id="i-submit" data-i18n="signInBtn"></button><span class="small muted" data-i18n="forgotPin"></span></div>
+        <div class="row-actions" style="grid-column:1/-1;align-items:center"><button class="btn primary" type="submit" id="i-submit" data-i18n="signInBtn"></button><button class="btn ghost" type="button" id="i-forgot" data-i18n="forgotBtn"></button></div>
         <div id="i-err" class="err" hidden style="grid-column:1/-1"></div>
       </form>
     </div>
@@ -300,7 +301,7 @@ en:{
     "You can challenge any other player to a points match, above or below you. It earns points but does not change the ladder, and the invited player can decline without penalty.",
     "If the challenger wins, they take the loser's place. The loser and any players in between move down one place. If the defender wins, the ladder stays the same.",
     "The organiser can cancel a disputed challenge. A player can leave at any time and starts at the bottom if they rejoin."],
-  sc_x19:"At the 19th", sc_x20:"At the 20th", sc_x21:"At the 21st", sc_conceded:"Conceded", sc_walkover:"Walkover", tabJoin:"New player", tabSignIn:"I already joined", fPin:"PIN (4 digits)", pinNote:"Pick a 4-digit PIN. You sign in with your name and PIN on any phone.", signInIntro:"Choose your name and enter your PIN.", signInBtn:"Sign in", pickName:"Choose your name", wrongPin:"Name or PIN is wrong.", badPin:"The PIN must be 4 to 8 digits.", nameTaken:"That name is already on the ladder. If it's you, sign in instead.", signOut:"Sign out", signedOut:"Signed out.", welcomeBack:"Welcome back!", forgotPin:"Forgot your PIN? The organiser can reset it.", installTitle:"Install Smash Golf on your phone", installIos:"iPhone: tap the Share button, then “Add to Home Screen”.", installAndroid:"Android: open the browser menu ⋮ and tap “Install app” or “Add to Home screen”.", installBtn:"Install", hide:"Hide", notConfigured:"The app isn't connected to its database yet. You can try Test mode in the meantime.", resetPin:"Reset a player's PIN", newPin:"New PIN", player:"Player", pinReset:"PIN changed. Tell the player their new PIN.", organiser:"Organiser"
+  sc_x19:"At the 19th", sc_x20:"At the 20th", sc_x21:"At the 21st", sc_conceded:"Conceded", sc_walkover:"Walkover", tabJoin:"New player", tabSignIn:"I already joined", fPin:"PIN (4 digits)", pinNote:"Pick a 4-digit PIN. You sign in with your name and PIN on any phone.", signInIntro:"Choose your name and enter your PIN.", signInBtn:"Sign in", pickName:"Choose your name", wrongPin:"Name or PIN is wrong.", badPin:"The PIN must be 4 to 8 digits.", nameTaken:"That name is already on the ladder. If it's you, sign in instead.", signOut:"Sign out", signedOut:"Signed out.", welcomeBack:"Welcome back!", forgotPin:"Forgot your PIN? The organiser can reset it.", installTitle:"Install Smash Golf on your phone", installIos:"iPhone: tap the Share button, then “Add to Home Screen”.", installAndroid:"Android: open the browser menu ⋮ and tap “Install app” or “Add to Home screen”.", installBtn:"Install", hide:"Hide", notConfigured:"The app isn't connected to its database yet. You can try Test mode in the meantime.", resetPin:"Reset a player's PIN", newPin:"New PIN", player:"Player", pinReset:"PIN changed. Tell the player their new PIN.", organiser:"Organiser", fEmail:"Email (for PIN reset)", phEmail:"name@example.com", emailNote:"Your email is only used to reset a forgotten PIN; nobody else sees it.", forgotBtn:"Forgot PIN?", recTitle:"Reset your PIN", recIntro:"Choose your name and enter the email saved in your profile. We'll email you a code.", sendCode:"Send code", codeSent:"Email sent. Enter the code from the email below (or tap the link in the email), then choose a new PIN.", fCode:"Code from the email", savePin:"Save new PIN", pinChanged:"Your PIN has been changed. You're signed in.", noMatch:"That email doesn't match the one saved for this player. Ask the organiser to reset your PIN.", noEmailSaved:"This player has no email saved. Ask the organiser to reset your PIN.", emailFail:"The email could not be sent. Try again in a minute.", badEmail:"Enter a valid email address.", badCode:"The code is wrong or has expired. Send a new one.", linkIntro:"Your email is confirmed. Choose your name and a new PIN."
 },
 sl:{
   tag:"Odprta matchplay lestvica · Sezona {s}", regTitle:"Prijava na lestvico",
@@ -368,7 +369,7 @@ sl:{
     "Vsakega drugega igralca, nad tabo ali pod tabo, lahko povabiš na dvoboj za točke. Prinese točke, lestvice pa ne spremeni. Povabljeni ga lahko zavrne brez posledic.",
     "Če zmaga izzivalec, prevzame mesto poraženega. Poraženi in vsi igralci vmes se pomaknejo eno mesto nižje. Če zmaga branilec, lestvica ostane nespremenjena.",
     "Organizator lahko razveljavi sporen izziv. Igralec lahko kadar koli izstopi; ob ponovni prijavi začne na dnu."],
-  sc_x19:"Na 19. luknji", sc_x20:"Na 20. luknji", sc_x21:"Na 21. luknji", sc_conceded:"Predaja", sc_walkover:"Brez boja", tabJoin:"Nov igralec", tabSignIn:"Že sem prijavljen", fPin:"PIN (4 številke)", pinNote:"Izberi 4-mestni PIN. Na katerem koli telefonu se prijaviš z imenom in PIN-om.", signInIntro:"Izberi svoje ime in vpiši PIN.", signInBtn:"Vstopi", pickName:"Izberi svoje ime", wrongPin:"Ime ali PIN ni pravilen.", badPin:"PIN mora imeti od 4 do 8 številk.", nameTaken:"To ime je že na lestvici. Če si to ti, se raje prijavi.", signOut:"Odjava", signedOut:"Odjavljen.", welcomeBack:"Dobrodošel nazaj!", forgotPin:"Si pozabil PIN? Organizator ga lahko ponastavi.", installTitle:"Namesti Smash Golf na telefon", installIos:"iPhone: tapni gumb Deli, nato »Dodaj na začetni zaslon«.", installAndroid:"Android: odpri meni brskalnika ⋮ in tapni »Namesti aplikacijo« ali »Dodaj na začetni zaslon«.", installBtn:"Namesti", hide:"Skrij", notConfigured:"Aplikacija še ni povezana z bazo. Medtem lahko preizkusiš preizkusni način.", resetPin:"Ponastavi PIN igralca", newPin:"Nov PIN", player:"Igralec", pinReset:"PIN spremenjen. Sporoči igralcu nov PIN.", organiser:"Organizator"
+  sc_x19:"Na 19. luknji", sc_x20:"Na 20. luknji", sc_x21:"Na 21. luknji", sc_conceded:"Predaja", sc_walkover:"Brez boja", tabJoin:"Nov igralec", tabSignIn:"Že sem prijavljen", fPin:"PIN (4 številke)", pinNote:"Izberi 4-mestni PIN. Na katerem koli telefonu se prijaviš z imenom in PIN-om.", signInIntro:"Izberi svoje ime in vpiši PIN.", signInBtn:"Vstopi", pickName:"Izberi svoje ime", wrongPin:"Ime ali PIN ni pravilen.", badPin:"PIN mora imeti od 4 do 8 številk.", nameTaken:"To ime je že na lestvici. Če si to ti, se raje prijavi.", signOut:"Odjava", signedOut:"Odjavljen.", welcomeBack:"Dobrodošel nazaj!", forgotPin:"Si pozabil PIN? Organizator ga lahko ponastavi.", installTitle:"Namesti Smash Golf na telefon", installIos:"iPhone: tapni gumb Deli, nato »Dodaj na začetni zaslon«.", installAndroid:"Android: odpri meni brskalnika ⋮ in tapni »Namesti aplikacijo« ali »Dodaj na začetni zaslon«.", installBtn:"Namesti", hide:"Skrij", notConfigured:"Aplikacija še ni povezana z bazo. Medtem lahko preizkusiš preizkusni način.", resetPin:"Ponastavi PIN igralca", newPin:"Nov PIN", player:"Igralec", pinReset:"PIN spremenjen. Sporoči igralcu nov PIN.", organiser:"Organizator", fEmail:"E-pošta (za ponastavitev PIN-a)", phEmail:"ime@primer.si", emailNote:"E-pošto uporabimo samo za ponastavitev pozabljenega PIN-a; nihče drug je ne vidi.", forgotBtn:"Pozabljen PIN?", recTitle:"Ponastavi PIN", recIntro:"Izberi svoje ime in vpiši e-pošto iz svojega profila. Poslali ti bomo kodo.", sendCode:"Pošlji kodo", codeSent:"E-pošta je poslana. Spodaj vpiši kodo iz e-pošte (ali tapni povezavo v e-pošti), nato izberi nov PIN.", fCode:"Koda iz e-pošte", savePin:"Shrani nov PIN", pinChanged:"PIN je spremenjen. Prijavljen si.", noMatch:"Ta e-pošta se ne ujema s shranjeno za tega igralca. Prosi organizatorja, da ponastavi PIN.", noEmailSaved:"Ta igralec nima shranjene e-pošte. Prosi organizatorja, da ponastavi PIN.", emailFail:"E-pošte ni bilo mogoče poslati. Poskusi znova čez minuto.", badEmail:"Vpiši veljaven e-poštni naslov.", badCode:"Koda je napačna ali je potekla. Pošlji novo.", linkIntro:"E-pošta je potrjena. Izberi svoje ime in nov PIN."
 },
 de:{
   tag:"Offene Matchplay-Leiter · Saison {s}", regTitle:"Bei der Leiter anmelden",
@@ -436,7 +437,7 @@ de:{
     "Du kannst jeden anderen Spieler, über oder unter dir, zu einem Punktematch einladen. Es bringt Punkte, ändert aber die Leiter nicht, und der Eingeladene kann ohne Nachteil ablehnen.",
     "Gewinnt der Herausforderer, übernimmt er den Platz des Verlierers. Der Verlierer und alle Spieler dazwischen rücken einen Platz nach unten. Gewinnt der Verteidiger, bleibt die Leiter gleich.",
     "Der Organisator kann eine strittige Forderung annullieren. Ein Spieler kann jederzeit aussteigen und beginnt bei erneuter Anmeldung unten."],
-  sc_x19:"Am 19. Loch", sc_x20:"Am 20. Loch", sc_x21:"Am 21. Loch", sc_conceded:"Aufgegeben", sc_walkover:"Kampflos", tabJoin:"Neuer Spieler", tabSignIn:"Ich bin schon dabei", fPin:"PIN (4 Ziffern)", pinNote:"Wähle eine 4-stellige PIN. Du meldest dich auf jedem Handy mit Name und PIN an.", signInIntro:"Wähle deinen Namen und gib deine PIN ein.", signInBtn:"Einloggen", pickName:"Wähle deinen Namen", wrongPin:"Name oder PIN ist falsch.", badPin:"Die PIN muss 4 bis 8 Ziffern haben.", nameTaken:"Dieser Name steht schon auf der Leiter. Wenn du das bist, logge dich stattdessen ein.", signOut:"Abmelden", signedOut:"Abgemeldet.", welcomeBack:"Willkommen zurück!", forgotPin:"PIN vergessen? Der Organisator kann sie zurücksetzen.", installTitle:"Smash Golf aufs Handy installieren", installIos:"iPhone: Teilen-Taste tippen, dann „Zum Home-Bildschirm“.", installAndroid:"Android: Browsermenü ⋮ öffnen und „App installieren“ oder „Zum Startbildschirm hinzufügen“ tippen.", installBtn:"Installieren", hide:"Ausblenden", notConfigured:"Die App ist noch nicht mit ihrer Datenbank verbunden. Probiere solange den Testmodus aus.", resetPin:"PIN eines Spielers zurücksetzen", newPin:"Neue PIN", player:"Spieler", pinReset:"PIN geändert. Teile dem Spieler die neue PIN mit.", organiser:"Organisator"
+  sc_x19:"Am 19. Loch", sc_x20:"Am 20. Loch", sc_x21:"Am 21. Loch", sc_conceded:"Aufgegeben", sc_walkover:"Kampflos", tabJoin:"Neuer Spieler", tabSignIn:"Ich bin schon dabei", fPin:"PIN (4 Ziffern)", pinNote:"Wähle eine 4-stellige PIN. Du meldest dich auf jedem Handy mit Name und PIN an.", signInIntro:"Wähle deinen Namen und gib deine PIN ein.", signInBtn:"Einloggen", pickName:"Wähle deinen Namen", wrongPin:"Name oder PIN ist falsch.", badPin:"Die PIN muss 4 bis 8 Ziffern haben.", nameTaken:"Dieser Name steht schon auf der Leiter. Wenn du das bist, logge dich stattdessen ein.", signOut:"Abmelden", signedOut:"Abgemeldet.", welcomeBack:"Willkommen zurück!", forgotPin:"PIN vergessen? Der Organisator kann sie zurücksetzen.", installTitle:"Smash Golf aufs Handy installieren", installIos:"iPhone: Teilen-Taste tippen, dann „Zum Home-Bildschirm“.", installAndroid:"Android: Browsermenü ⋮ öffnen und „App installieren“ oder „Zum Startbildschirm hinzufügen“ tippen.", installBtn:"Installieren", hide:"Ausblenden", notConfigured:"Die App ist noch nicht mit ihrer Datenbank verbunden. Probiere solange den Testmodus aus.", resetPin:"PIN eines Spielers zurücksetzen", newPin:"Neue PIN", player:"Spieler", pinReset:"PIN geändert. Teile dem Spieler die neue PIN mit.", organiser:"Organisator", fEmail:"E-Mail (zum Zurücksetzen der PIN)", phEmail:"name@beispiel.de", emailNote:"Deine E-Mail wird nur zum Zurücksetzen einer vergessenen PIN verwendet; niemand sonst sieht sie.", forgotBtn:"PIN vergessen?", recTitle:"PIN zurücksetzen", recIntro:"Wähle deinen Namen und gib die E-Mail aus deinem Profil ein. Wir schicken dir einen Code.", sendCode:"Code senden", codeSent:"E-Mail gesendet. Gib unten den Code aus der E-Mail ein (oder tippe auf den Link in der E-Mail) und wähle eine neue PIN.", fCode:"Code aus der E-Mail", savePin:"Neue PIN speichern", pinChanged:"Deine PIN wurde geändert. Du bist angemeldet.", noMatch:"Diese E-Mail passt nicht zu der für diesen Spieler gespeicherten. Bitte den Organisator, deine PIN zurückzusetzen.", noEmailSaved:"Für diesen Spieler ist keine E-Mail gespeichert. Bitte den Organisator, deine PIN zurückzusetzen.", emailFail:"Die E-Mail konnte nicht gesendet werden. Versuche es in einer Minute erneut.", badEmail:"Gib eine gültige E-Mail-Adresse ein.", badCode:"Der Code ist falsch oder abgelaufen. Fordere einen neuen an.", linkIntro:"Deine E-Mail ist bestätigt. Wähle deinen Namen und eine neue PIN."
 },
 it:{
   tag:"Classifica matchplay aperta · Stagione {s}", regTitle:"Iscriviti alla classifica",
@@ -504,7 +505,7 @@ it:{
     "Puoi invitare qualsiasi altro giocatore, sopra o sotto di te, a un match a punti. Dà punti ma non cambia la classifica, e l'invitato può rifiutare senza penalità.",
     "Se vince lo sfidante, prende il posto dello sconfitto. Lo sconfitto e tutti i giocatori in mezzo scendono di una posizione. Se vince lo sfidato, la classifica non cambia.",
     "L'organizzatore può annullare una sfida contestata. Un giocatore può ritirarsi in qualsiasi momento e, se si iscrive di nuovo, riparte dal fondo."],
-  sc_x19:"Alla 19ª buca", sc_x20:"Alla 20ª buca", sc_x21:"Alla 21ª buca", sc_conceded:"Concesso", sc_walkover:"A tavolino", tabJoin:"Nuovo giocatore", tabSignIn:"Sono già iscritto", fPin:"PIN (4 cifre)", pinNote:"Scegli un PIN di 4 cifre. Accedi con nome e PIN da qualsiasi telefono.", signInIntro:"Scegli il tuo nome e inserisci il PIN.", signInBtn:"Entra", pickName:"Scegli il tuo nome", wrongPin:"Nome o PIN errato.", badPin:"Il PIN deve avere da 4 a 8 cifre.", nameTaken:"Questo nome è già in classifica. Se sei tu, accedi.", signOut:"Esci", signedOut:"Disconnesso.", welcomeBack:"Bentornato!", forgotPin:"PIN dimenticato? L'organizzatore può reimpostarlo.", installTitle:"Installa Smash Golf sul telefono", installIos:"iPhone: tocca il pulsante Condividi, poi “Aggiungi alla schermata Home”.", installAndroid:"Android: apri il menu del browser ⋮ e tocca “Installa app” o “Aggiungi a schermata Home”.", installBtn:"Installa", hide:"Nascondi", notConfigured:"L'app non è ancora collegata al database. Nel frattempo puoi provare la modalità prova.", resetPin:"Reimposta il PIN di un giocatore", newPin:"Nuovo PIN", player:"Giocatore", pinReset:"PIN cambiato. Comunica al giocatore il nuovo PIN.", organiser:"Organizzatore"
+  sc_x19:"Alla 19ª buca", sc_x20:"Alla 20ª buca", sc_x21:"Alla 21ª buca", sc_conceded:"Concesso", sc_walkover:"A tavolino", tabJoin:"Nuovo giocatore", tabSignIn:"Sono già iscritto", fPin:"PIN (4 cifre)", pinNote:"Scegli un PIN di 4 cifre. Accedi con nome e PIN da qualsiasi telefono.", signInIntro:"Scegli il tuo nome e inserisci il PIN.", signInBtn:"Entra", pickName:"Scegli il tuo nome", wrongPin:"Nome o PIN errato.", badPin:"Il PIN deve avere da 4 a 8 cifre.", nameTaken:"Questo nome è già in classifica. Se sei tu, accedi.", signOut:"Esci", signedOut:"Disconnesso.", welcomeBack:"Bentornato!", forgotPin:"PIN dimenticato? L'organizzatore può reimpostarlo.", installTitle:"Installa Smash Golf sul telefono", installIos:"iPhone: tocca il pulsante Condividi, poi “Aggiungi alla schermata Home”.", installAndroid:"Android: apri il menu del browser ⋮ e tocca “Installa app” o “Aggiungi a schermata Home”.", installBtn:"Installa", hide:"Nascondi", notConfigured:"L'app non è ancora collegata al database. Nel frattempo puoi provare la modalità prova.", resetPin:"Reimposta il PIN di un giocatore", newPin:"Nuovo PIN", player:"Giocatore", pinReset:"PIN cambiato. Comunica al giocatore il nuovo PIN.", organiser:"Organizzatore", fEmail:"E-mail (per reimpostare il PIN)", phEmail:"nome@esempio.it", emailNote:"La tua e-mail serve solo a reimpostare un PIN dimenticato; nessun altro la vede.", forgotBtn:"PIN dimenticato?", recTitle:"Reimposta il PIN", recIntro:"Scegli il tuo nome e inserisci l'e-mail salvata nel profilo. Ti invieremo un codice.", sendCode:"Invia codice", codeSent:"E-mail inviata. Inserisci qui sotto il codice dell'e-mail (o tocca il link nell'e-mail), poi scegli un nuovo PIN.", fCode:"Codice dall'e-mail", savePin:"Salva nuovo PIN", pinChanged:"Il PIN è stato cambiato. Hai effettuato l'accesso.", noMatch:"Questa e-mail non corrisponde a quella salvata per questo giocatore. Chiedi all'organizzatore di reimpostare il PIN.", noEmailSaved:"Questo giocatore non ha un'e-mail salvata. Chiedi all'organizzatore di reimpostare il PIN.", emailFail:"Impossibile inviare l'e-mail. Riprova tra un minuto.", badEmail:"Inserisci un indirizzo e-mail valido.", badCode:"Il codice è errato o scaduto. Richiedine uno nuovo.", linkIntro:"La tua e-mail è confermata. Scegli il tuo nome e un nuovo PIN."
 }};
 // Match play rules supplied by the organiser (Slovenian original, translated).
 const MP={
@@ -660,12 +661,12 @@ function setSession(s){ try{ if(s) localStorage.setItem(SESSION_KEY,JSON.stringi
 let SESSION = getSession();
 
 class ApiError extends Error{ constructor(code,msg){ super(msg); this.code=code; } }
-async function rpc(fn, args){
+async function rpc(fn, args, token){
   let res;
   try{
     res = await fetch(CFG.url.replace(/\/+$/,"")+"/rest/v1/rpc/"+fn, {
       method:"POST",
-      headers:Object.assign({"Content-Type":"application/json","apikey":CFG.key}, /^eyJ/.test(CFG.key)?{"Authorization":"Bearer "+CFG.key}:{}),
+      headers:Object.assign({"Content-Type":"application/json","apikey":CFG.key}, token?{"Authorization":"Bearer "+token}:/^eyJ/.test(CFG.key)?{"Authorization":"Bearer "+CFG.key}:{}),
       body:JSON.stringify(args||{})
     });
   }catch(e){ throw new ApiError("unavailable", t("unavailable")); }
@@ -673,11 +674,26 @@ async function rpc(fn, args){
   let body=null; try{ body = txt?JSON.parse(txt):null; }catch(e){}
   if(!res.ok){
     const m = body && body.message;
-    const map = {auth:"wrongPin", taken:"nameTaken", pin:"badPin", name:"enterName"};
+    const map = {auth:"wrongPin", taken:"nameTaken", pin:"badPin", name:"enterName", nomatch:"noMatch"};
     if(m==="auth" && SESSION && fn!=="sg_login"){ /* stale PIN */ setSession(null); SESSION=null; S.liveMe=null; S.me=null; }
     throw new ApiError(m||"error", map[m] ? t(map[m]) : (res.status>=500 ? t("unavailable") : t("genericErr")));
   }
   return body;
+}
+async function authCall(path, body, failKey){
+  let res;
+  try{ res = await fetch(CFG.url.replace(/\/+$/,"")+"/auth/v1/"+path, {method:"POST", headers:{"Content-Type":"application/json","apikey":CFG.key}, body:JSON.stringify(body)}); }
+  catch(e){ throw new ApiError("unavailable", t("unavailable")); }
+  let b=null; try{ b=await res.json(); }catch(e){}
+  if(!res.ok) throw new ApiError("authfail", t(failKey));
+  return b||{};
+}
+const APP_URL = location.origin + location.pathname;
+async function sendRecoveryEmail(email){ await authCall("otp?redirect_to="+encodeURIComponent(APP_URL), {email, create_user:true}, "emailFail"); }
+async function verifyRecoveryCode(email, code){ const b = await authCall("verify", {type:"email", email, token:code}, "badCode"); if(!b.access_token) throw new ApiError("authfail", t("badCode")); return b.access_token; }
+async function recoverPin(token, name, pin){
+  const r = await rpc("sg_recover_pin", {p_name:name, p_new:pin}, token);
+  SESSION={id:r.id,pin}; setSession(SESSION); S.liveMe=r.id; S.me=r.id; await refresh();
 }
 const liveData={players:{},order:[],challenges:{},names:[]};
 let refreshing=null;
@@ -708,7 +724,7 @@ async function refresh(){
 function cred(){ if(!SESSION) throw new ApiError("auth", t("wrongPin")); return {p_id:SESSION.id, p_pin:SESSION.pin}; }
 const Live = {
   async join(form){
-    const r = await rpc("sg_register",{p_name:form.name, p_pin:form.pin, p_data:{club:form.club, hcp:form.hcp, contact:form.contact, joinedAt:Date.now()}});
+    const r = await rpc("sg_register",{p_name:form.name, p_pin:form.pin, p_data:{club:form.club, hcp:form.hcp, contact:form.contact, email:form.email, joinedAt:Date.now()}});
     SESSION={id:r.id,pin:form.pin}; setSession(SESSION); S.liveMe=r.id; S.me=r.id; await refresh();
   },
   async login(id, pin){
@@ -794,7 +810,7 @@ function reportModal(c){
 function profileModal(){
   const p=S.players[S.me]; if(!p) return;
   const f=(id,lab,val)=>h("div",{class:"field"},h("label",{for:id,text:lab}),h("input",{id,value:val||"",maxlength:"80"}));
-  const parts=[h("div",{class:"form"}, f("p-name",t("fName"),p.name), f("p-club",t("fClub"),p.club), f("p-hcp",t("fHcpShort"),p.hcp), f("p-contact",t("fContactShort"),p.contact))];
+  const parts=[h("div",{class:"form"}, f("p-name",t("fName"),p.name), f("p-club",t("fClub"),p.club), f("p-hcp",t("fHcpShort"),p.hcp), f("p-contact",t("fContactShort"),p.contact), f("p-email",t("fEmail"),p.email))];
   if(S.isOwner){
     const others=ladder().filter(x=>x!==S.me);
     if(others.length){
@@ -811,7 +827,7 @@ function profileModal(){
     h("button",{class:"btn primary",onclick:async ()=>{
       const v=k=>document.getElementById(k).value.trim();
       if(v("p-name").length<2){ toast(t("enterName")); return; }
-      await run(()=>Live.saveProfile(Object.assign({},p,{name:v("p-name"),club:v("p-club"),hcp:v("p-hcp").replace(",","."),contact:v("p-contact")})),t("profileSaved")); closeModal(); }, text:t("save")}),
+      await run(()=>Live.saveProfile(Object.assign({},p,{name:v("p-name"),club:v("p-club"),hcp:v("p-hcp").replace(",","."),contact:v("p-contact"),email:v("p-email")})),t("profileSaved")); closeModal(); }, text:t("save")}),
     h("button",{class:"btn",onclick:()=>{ setSession(null); SESSION=null; S.liveMe=null; S.me=null; S.isOwner=false; S.canWrite=false; closeModal(); refresh(); toast(t("signedOut")); }, text:t("signOut")}),
     h("button",{class:"btn ghost danger",onclick:()=>confirmModal(t("leaveTitle"),t("leaveText"),t("leave"),()=>run(()=>Live.leave(),t("leftMsg")),"flag"), text:t("leaveTitle")}),
     h("button",{class:"btn ghost",onclick:closeModal,text:t("close")})
@@ -1066,7 +1082,8 @@ document.getElementById("regform").addEventListener("submit", async e=>{
   try{
     if(v("r-name").length<2) throw new Error(t("enterName"));
     if(!/^[0-9]{4,8}$/.test(v("r-pin"))) throw new Error(t("badPin"));
-    await Live.join({name:v("r-name"), pin:v("r-pin"), club:v("r-club"), hcp:v("r-hcp").replace(",","."), contact:v("r-contact")});
+    if(v("r-email") && !EMAIL_RE.test(v("r-email"))) throw new Error(t("badEmail"));
+    await Live.join({name:v("r-name"), pin:v("r-pin"), club:v("r-club"), hcp:v("r-hcp").replace(",","."), contact:v("r-contact"), email:v("r-email")});
     e.target.reset(); toast(t("welcome"));
   }catch(ex){
     if(ex && ex.code==="taken") setPane("in");
@@ -1104,6 +1121,71 @@ document.getElementById("install-btn").addEventListener("click", async ()=>{ if(
 document.getElementById("install-hide").addEventListener("click", ()=>{ try{ localStorage.setItem("sg-install-hide","1"); }catch(e){} renderInstall(); });
 if("serviceWorker" in navigator && location.protocol==="https:"){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
 
+// ---------- PIN recovery by email ----------
+const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function nameSelect(id, selected){
+  return h("select",{id}, h("option",{value:"",text:t("pickName")}), liveData.names.map(x=>h("option",{value:x.name,selected:x.name===selected,text:x.name})));
+}
+function recoveryModal(){
+  const curId=document.getElementById("i-name").value;
+  const cur=(liveData.names.find(x=>x.id===curId)||{}).name||"";
+  const who=nameSelect("rc-name",cur);
+  const mail=h("input",{id:"rc-email",type:"email",inputmode:"email",autocomplete:"email",maxlength:"120",placeholder:t("phEmail")});
+  const code=h("input",{id:"rc-code",inputmode:"numeric",autocomplete:"one-time-code",maxlength:"10"});
+  const pin=h("input",{id:"rc-pin",type:"password",inputmode:"numeric",maxlength:"8",autocomplete:"new-password"});
+  const err=h("div",{class:"err",hidden:true});
+  const step2=h("div",{class:"form",hidden:true},
+    h("p",{class:"small",style:"grid-column:1/-1;margin:0",text:t("codeSent")}),
+    h("div",{class:"field"},h("label",{for:"rc-code",text:t("fCode")}),code),
+    h("div",{class:"field"},h("label",{for:"rc-pin",text:t("newPin")}),pin));
+  const showErr=m=>{ err.textContent=m; err.hidden=false; };
+  const saveBtn=h("button",{class:"btn primary",hidden:true,onclick:async e=>{
+    err.hidden=true;
+    if(!/^[0-9]{4,8}$/.test(pin.value.trim())){ showErr(t("badPin")); return; }
+    e.target.disabled=true;
+    try{ const tok=await verifyRecoveryCode(mail.value.trim().toLowerCase(), code.value.trim()); await recoverPin(tok, who.value, pin.value.trim()); closeModal(); toast(t("pinChanged")); }
+    catch(ex){ showErr(ex.message); }
+    finally{ e.target.disabled=false; }
+  }, text:t("savePin")});
+  const sendBtn=h("button",{class:"btn primary",onclick:async e=>{
+    err.hidden=true;
+    const n=liveData.names.find(x=>x.name===who.value);
+    if(!n){ showErr(t("pickName")); return; }
+    const pl=liveData.players[n.id];
+    if(pl && pl.hasEmail===false){ showErr(t("noEmailSaved")); return; }
+    if(!EMAIL_RE.test(mail.value.trim())){ showErr(t("badEmail")); return; }
+    e.target.disabled=true;
+    try{ await sendRecoveryEmail(mail.value.trim().toLowerCase()); try{ localStorage.setItem("sg-rec-name",who.value); }catch(x){} step2.hidden=false; sendBtn.hidden=true; saveBtn.hidden=false; code.focus(); }
+    catch(ex){ showErr(ex.message); }
+    finally{ e.target.disabled=false; }
+  }, text:t("sendCode")});
+  modal(t("recTitle"), h("div",{class:"section"},
+    h("p",{class:"muted",style:"margin:0",text:t("recIntro")}),
+    h("div",{class:"form"}, h("div",{class:"field"},h("label",{for:"rc-name",text:t("fName")}),who), h("div",{class:"field"},h("label",{for:"rc-email",text:t("fEmail")}),mail)),
+    step2, err), [sendBtn, saveBtn, h("button",{class:"btn ghost",onclick:closeModal,text:t("cancel")})]);
+}
+document.getElementById("i-forgot").addEventListener("click", ()=>{ if(CONFIGURED) recoveryModal(); });
+// arriving from the link in the email (#access_token=...)
+function linkRecoveryModal(token){
+  let saved=""; try{ saved=localStorage.getItem("sg-rec-name")||""; }catch(e){}
+  const who=nameSelect("rl-name",saved);
+  const pin=h("input",{id:"rl-pin",type:"password",inputmode:"numeric",maxlength:"8",autocomplete:"new-password"});
+  const err=h("div",{class:"err",hidden:true});
+  modal(t("recTitle"), h("div",{class:"section"},
+    h("p",{class:"muted",style:"margin:0",text:t("linkIntro")}),
+    h("div",{class:"form"}, h("div",{class:"field"},h("label",{for:"rl-name",text:t("fName")}),who), h("div",{class:"field"},h("label",{for:"rl-pin",text:t("newPin")}),pin)), err),
+    [h("button",{class:"btn primary",onclick:async e=>{
+      err.hidden=true;
+      if(!who.value){ err.textContent=t("pickName"); err.hidden=false; return; }
+      if(!/^[0-9]{4,8}$/.test(pin.value.trim())){ err.textContent=t("badPin"); err.hidden=false; return; }
+      e.target.disabled=true;
+      try{ await recoverPin(token, who.value, pin.value.trim()); closeModal(); toast(t("pinChanged")); }
+      catch(ex){ err.textContent=ex.message; err.hidden=false; }
+      finally{ e.target.disabled=false; }
+    }, text:t("savePin")}), h("button",{class:"btn ghost",onclick:closeModal,text:t("cancel")})]);
+}
+const LINK_TOKEN = (()=>{ const m=/[#&]access_token=([^&]+)/.exec(location.hash||""); if(!m) return null; try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} return decodeURIComponent(m[1]); })();
+
 // ---------- boot ----------
 const _applyStatic = applyStatic;
 applyStatic = function(){ _applyStatic(); renderInstall(); fillNames(); };
@@ -1116,7 +1198,7 @@ if(!CONFIGURED){
 } else {
   S.live=Live; S.liveMe = SESSION ? SESSION.id : null; S.me=S.liveMe;
   S.canWrite=!!SESSION;
-  refresh();
+  refresh().then(()=>{ if(LINK_TOKEN) linkRecoveryModal(LINK_TOKEN); });
   setInterval(()=>{ if(document.visibilityState==="visible" && S.mode==="live" && !document.querySelector(".overlay")) refresh(); }, 10000);
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") refresh(); });
   window.addEventListener("online",()=>refresh());
