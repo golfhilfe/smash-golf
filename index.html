@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Smash Golf</title>
 <meta name="description" content="Smash Golf: open matchplay ladder">
-<meta name="theme-color" content="#1d6a43">
+<meta name="theme-color" content="#0b1f3a">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="icon" href="icons/favicon-32.png" type="image/png" sizes="32x32">
@@ -20,22 +20,26 @@
 <style>
 /* Layout: an app shell. Header with wordmark and "you" card, tab bar, one working column (ladder rows like a scorecard). */
 :root{
-  --bg:#eef2ea; --surface:#ffffff; --surface-2:#f6f8f3; --ink:#11261b; --muted:#5a6d61; --line:#d6dfd2;
-  --fairway:#1d6a43; --fairway-ink:#ffffff; --flag:#d2442c; --sand:#efe3c2; --sand-ink:#6b5a24;
-  --ok:#1d7a4a; --warn:#a86a00; --bad:#b3341f;
+  /* Brand: logo A "Impact Burst", navy #0B1F3A + volt lime #C6FF00. Text colours meet WCAG AA in both themes. */
+  --bg:#f1f4f9; --surface:#ffffff; --surface-2:#f5f7fb; --ink:#0b1f3a; --muted:#4a5a72; --line:#d3dbe7;
+  --fairway:#0b1f3a; --fairway-ink:#c6ff00; --flag:#4a7a00; --flag-ink:#ffffff; --volt:#c6ff00;
+  --sand:#ecf8c4; --sand-ink:#334d00;
+  --ok:#17784a; --warn:#8a5600; --bad:#b3341f;
   --f-display:"Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
   --f-body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --r:10px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0c1510; --surface:#132019; --surface-2:#18281f; --ink:#e6efe8; --muted:#90a497; --line:#24372b;
-  --fairway:#4fbf83; --fairway-ink:#08140d; --flag:#ff6a50; --sand:#3a321c; --sand-ink:#e8d39a;
-  --ok:#5fd39a; --warn:#f0b54a; --bad:#ff7a63; color-scheme:dark }}
+  --bg:#06111f; --surface:#0b1f3a; --surface-2:#112849; --ink:#edf2f8; --muted:#a3b2c8; --line:#22406a;
+  --fairway:#c6ff00; --fairway-ink:#0b1f3a; --flag:#c6ff00; --flag-ink:#0b1f3a; --volt:#c6ff00;
+  --sand:#24360c; --sand-ink:#ddf59a;
+  --ok:#5fd39a; --warn:#f0b54a; --bad:#ff8a75; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --bg:#0c1510; --surface:#132019; --surface-2:#18281f; --ink:#e6efe8; --muted:#90a497; --line:#24372b;
-  --fairway:#4fbf83; --fairway-ink:#08140d; --flag:#ff6a50; --sand:#3a321c; --sand-ink:#e8d39a;
-  --ok:#5fd39a; --warn:#f0b54a; --bad:#ff7a63; color-scheme:dark }
+  --bg:#06111f; --surface:#0b1f3a; --surface-2:#112849; --ink:#edf2f8; --muted:#a3b2c8; --line:#22406a;
+  --fairway:#c6ff00; --fairway-ink:#0b1f3a; --flag:#c6ff00; --flag-ink:#0b1f3a; --volt:#c6ff00;
+  --sand:#24360c; --sand-ink:#ddf59a;
+  --ok:#5fd39a; --warn:#f0b54a; --bad:#ff8a75; color-scheme:dark }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
@@ -72,13 +76,13 @@ button,input,select{font:inherit;color:inherit}
 .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
 .tab{background:none;border:0;padding:10px 14px;cursor:pointer;color:var(--muted);font-weight:600;border-bottom:3px solid transparent;white-space:nowrap}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--flag)}
-.tab .cnt{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:10px;background:var(--flag);color:#fff;font-size:12px;line-height:20px;text-align:center}
+.tab .cnt{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:10px;background:var(--flag);color:var(--flag-ink);font-size:12px;line-height:20px;text-align:center}
 
 /* buttons */
 .btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 14px;font-weight:600;cursor:pointer;font-size:14px;white-space:nowrap}
 .btn:hover{border-color:var(--muted)}
 .btn.primary{background:var(--fairway);border-color:var(--fairway);color:var(--fairway-ink)}
-.btn.flag{background:var(--flag);border-color:var(--flag);color:#fff}
+.btn.flag{background:var(--flag);border-color:var(--flag);color:var(--flag-ink)}
 .btn.ghost{background:transparent}
 .btn.danger{color:var(--bad)}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
@@ -141,7 +145,7 @@ button,input,select{font:inherit;color:inherit}
 .rules li::marker{font-family:var(--f-mono);color:var(--flag);font-weight:700}
 
 /* modal */
-.overlay{position:fixed;inset:0;background:rgba(5,12,8,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.overlay{position:fixed;inset:0;background:rgba(4,10,22,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
 .modal{background:var(--surface);color:var(--ink);border-radius:14px;max-width:480px;width:100%;padding:20px;display:flex;flex-direction:column;gap:14px;max-height:90vh;overflow:auto}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;z-index:60;max-width:calc(100% - 32px)}
 .status{font-size:13px;color:var(--muted)}
