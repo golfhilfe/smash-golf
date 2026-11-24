@@ -263,7 +263,7 @@ en:{
   meBusyTip:"You already have an open challenge", busyTip:"This player is busy",
   pmTitle:"Points match against {n}",
   pmText:(pos,w,l)=>`This is a points match against the player in ${pos} place. The ladder does not change. If you win, you get ${w} ${w===1?"point":"points"}; if they win, they get ${l}. They can decline without penalty.`,
-  sendInvite:"Send invitation", inviteSent:"Points match invitation sent.", pmBtn:"Points match +{w}",
+  sendInvite:"Send invitation", inviteSent:"Points match invitation sent.", pmBtn:"Points match +{w}", holes:"Holes", holesN:"{n} holes", holesNote:"Choose 9 or 18 holes of matchplay. Your opponent sees this before accepting.",
   you:"You", inRange:"In range · win {p} pts", pts:"{p} pts", place:"{pos} place",
   challenger:"Challenger", defender:"Defender",
   stPending:"Waiting for acceptance", stAccepted:"Arrange and play", stReported:"Waiting for result confirmation", pointsMatch:"Points match",
@@ -288,7 +288,7 @@ en:{
   sample:" (sample)", rulesTitle:"Smash Golf ladder rules",
   rules:[
     "The competition is open to all active golfers and runs for the whole season. New players join at the bottom of the ladder.",
-    "Matches are 18-hole matchplay. You and your opponent agree on the course and tee time. If all square, play continues until a hole is won.",
+    "Matches are matchplay over 9 or 18 holes; the challenger chooses when sending the challenge. You and your opponent agree on the course and tee time. If all square, play continues until a hole is won.",
     "A ladder challenge, which can change positions, can only go to a player one or two places above you.",
     "Each player can have only one open match at a time. A player already in a match or with an open challenge cannot be challenged.",
     "The challenged player must accept within {a} days. Declining counts as conceding. If there is no answer in time, the challenger can claim a walkover win.",
@@ -298,7 +298,7 @@ en:{
     "You can challenge any other player to a points match, above or below you. It earns points but does not change the ladder, and the invited player can decline without penalty.",
     "If the challenger wins, they take the loser's place. The loser and any players in between move down one place. If the defender wins, the ladder stays the same.",
     "The organiser can cancel a disputed challenge. A player can leave at any time and starts at the bottom if they rejoin."],
-  sc_x19:"At the 19th", sc_x20:"At the 20th", sc_x21:"At the 21st", sc_conceded:"Conceded", sc_walkover:"Walkover", tabJoin:"New player", tabSignIn:"I already joined", fPin:"PIN (4 digits)", pinNote:"Pick a 4-digit PIN. You sign in with your name and PIN on any phone.", signInIntro:"Choose your name and enter your PIN.", signInBtn:"Sign in", pickName:"Choose your name", wrongPin:"Name or PIN is wrong.", badPin:"The PIN must be 4 to 8 digits.", nameTaken:"That name is already on the ladder. If it's you, sign in instead.", signOut:"Sign out", signedOut:"Signed out.", welcomeBack:"Welcome back!", forgotPin:"Forgot your PIN? The organiser can reset it.", installTitle:"Install Smash Golf on your phone", installIos:"iPhone: tap the Share button, then “Add to Home Screen”.", installAndroid:"Android: open the browser menu ⋮ and tap “Install app” or “Add to Home screen”.", installBtn:"Install", hide:"Hide", notConfigured:"The app isn't connected to its database yet. You can try Test mode in the meantime.", resetPin:"Reset a player's PIN", newPin:"New PIN", player:"Player", pinReset:"PIN changed. Tell the player their new PIN.", organiser:"Organiser"
+  sc_x10:"At the 10th", sc_x11:"At the 11th", sc_x12:"At the 12th", sc_x19:"At the 19th", sc_x20:"At the 20th", sc_x21:"At the 21st", sc_conceded:"Conceded", sc_walkover:"Walkover", tabJoin:"New player", tabSignIn:"I already joined", fPin:"PIN (4 digits)", pinNote:"Pick a 4-digit PIN. You sign in with your name and PIN on any phone.", signInIntro:"Choose your name and enter your PIN.", signInBtn:"Sign in", pickName:"Choose your name", wrongPin:"Name or PIN is wrong.", badPin:"The PIN must be 4 to 8 digits.", nameTaken:"That name is already on the ladder. If it's you, sign in instead.", signOut:"Sign out", signedOut:"Signed out.", welcomeBack:"Welcome back!", forgotPin:"Forgot your PIN? The organiser can reset it.", installTitle:"Install Smash Golf on your phone", installIos:"iPhone: tap the Share button, then “Add to Home Screen”.", installAndroid:"Android: open the browser menu ⋮ and tap “Install app” or “Add to Home screen”.", installBtn:"Install", hide:"Hide", notConfigured:"The app isn't connected to its database yet. You can try Test mode in the meantime.", resetPin:"Reset a player's PIN", newPin:"New PIN", player:"Player", pinReset:"PIN changed. Tell the player their new PIN.", organiser:"Organiser"
 },
 sl:{
   tag:"Odprta matchplay lestvica · Sezona {s}", regTitle:"Prijava na lestvico",
@@ -331,7 +331,7 @@ sl:{
   meBusyTip:"Že imaš odprt izziv", busyTip:"Igralec je zaseden",
   pmTitle:"Dvoboj za točke: {n}",
   pmText:(pos,w,l)=>`To je dvoboj za točke proti igralcu na ${pos} mestu. Lestvica se ne spremeni. Če zmagaš, dobiš ${w} t.; če zmaga on, dobi ${l} t. Povabilo lahko zavrne brez posledic.`,
-  sendInvite:"Pošlji povabilo", inviteSent:"Povabilo na dvoboj za točke poslano.", pmBtn:"Dvoboj za točke +{w}",
+  sendInvite:"Pošlji povabilo", inviteSent:"Povabilo na dvoboj za točke poslano.", pmBtn:"Dvoboj za točke +{w}", holes:"Število lukenj", holesN:"{n} lukenj", holesNote:"Izberi matchplay na 9 ali 18 lukenj. Nasprotnik to vidi, preden sprejme.",
   you:"Ti", inRange:"V dosegu · zmaga {p} t.", pts:"{p} t.", place:"{pos} mesto",
   challenger:"Izzivalec", defender:"Branilec",
   stPending:"Čaka na sprejem", stAccepted:"Dogovor in igra", stReported:"Čaka na potrditev rezultata", pointsMatch:"Dvoboj za točke",
@@ -356,7 +356,7 @@ sl:{
   sample:" (vzorec)", rulesTitle:"Pravila Smash Golf lestvice",
   rules:[
     "Tekmovanje je odprto za vse aktivne igralce golfa in traja celo sezono. Nov igralec se uvrsti na dno lestvice.",
-    "Igra se matchplay, 18 lukenj. Z nasprotnikom se dogovoriš za igrišče in termin. Pri izenačenju se igra naprej do odločilne luknje.",
+    "Igra se matchplay na 9 ali 18 lukenj; izzivalec izbere ob pošiljanju izziva. Z nasprotnikom se dogovoriš za igrišče in termin. Pri izenačenju se igra naprej do odločilne luknje.",
     "Izziv za lestvico, ki lahko spremeni mesta, lahko pošlješ samo igralcu, ki je eno ali dve mesti nad tabo.",
     "Vsak igralec ima naenkrat lahko samo en odprt dvoboj. Igralca, ki je že v dvoboju ali ima odprt izziv, ni mogoče izzvati.",
     "Izzvani igralec mora izziv sprejeti v {a} dneh. Zavrnitev šteje kot predaja. Če ne odgovori v roku, lahko izzivalec zahteva zmago brez boja.",
@@ -366,7 +366,7 @@ sl:{
     "Vsakega drugega igralca, nad tabo ali pod tabo, lahko povabiš na dvoboj za točke. Prinese točke, lestvice pa ne spremeni. Povabljeni ga lahko zavrne brez posledic.",
     "Če zmaga izzivalec, prevzame mesto poraženega. Poraženi in vsi igralci vmes se pomaknejo eno mesto nižje. Če zmaga branilec, lestvica ostane nespremenjena.",
     "Organizator lahko razveljavi sporen izziv. Igralec lahko kadar koli izstopi; ob ponovni prijavi začne na dnu."],
-  sc_x19:"Na 19. luknji", sc_x20:"Na 20. luknji", sc_x21:"Na 21. luknji", sc_conceded:"Predaja", sc_walkover:"Brez boja", tabJoin:"Nov igralec", tabSignIn:"Že sem prijavljen", fPin:"PIN (4 številke)", pinNote:"Izberi 4-mestni PIN. Na katerem koli telefonu se prijaviš z imenom in PIN-om.", signInIntro:"Izberi svoje ime in vpiši PIN.", signInBtn:"Vstopi", pickName:"Izberi svoje ime", wrongPin:"Ime ali PIN ni pravilen.", badPin:"PIN mora imeti od 4 do 8 številk.", nameTaken:"To ime je že na lestvici. Če si to ti, se raje prijavi.", signOut:"Odjava", signedOut:"Odjavljen.", welcomeBack:"Dobrodošel nazaj!", forgotPin:"Si pozabil PIN? Organizator ga lahko ponastavi.", installTitle:"Namesti Smash Golf na telefon", installIos:"iPhone: tapni gumb Deli, nato »Dodaj na začetni zaslon«.", installAndroid:"Android: odpri meni brskalnika ⋮ in tapni »Namesti aplikacijo« ali »Dodaj na začetni zaslon«.", installBtn:"Namesti", hide:"Skrij", notConfigured:"Aplikacija še ni povezana z bazo. Medtem lahko preizkusiš preizkusni način.", resetPin:"Ponastavi PIN igralca", newPin:"Nov PIN", player:"Igralec", pinReset:"PIN spremenjen. Sporoči igralcu nov PIN.", organiser:"Organizator"
+  sc_x10:"Na 10. luknji", sc_x11:"Na 11. luknji", sc_x12:"Na 12. luknji", sc_x19:"Na 19. luknji", sc_x20:"Na 20. luknji", sc_x21:"Na 21. luknji", sc_conceded:"Predaja", sc_walkover:"Brez boja", tabJoin:"Nov igralec", tabSignIn:"Že sem prijavljen", fPin:"PIN (4 številke)", pinNote:"Izberi 4-mestni PIN. Na katerem koli telefonu se prijaviš z imenom in PIN-om.", signInIntro:"Izberi svoje ime in vpiši PIN.", signInBtn:"Vstopi", pickName:"Izberi svoje ime", wrongPin:"Ime ali PIN ni pravilen.", badPin:"PIN mora imeti od 4 do 8 številk.", nameTaken:"To ime je že na lestvici. Če si to ti, se raje prijavi.", signOut:"Odjava", signedOut:"Odjavljen.", welcomeBack:"Dobrodošel nazaj!", forgotPin:"Si pozabil PIN? Organizator ga lahko ponastavi.", installTitle:"Namesti Smash Golf na telefon", installIos:"iPhone: tapni gumb Deli, nato »Dodaj na začetni zaslon«.", installAndroid:"Android: odpri meni brskalnika ⋮ in tapni »Namesti aplikacijo« ali »Dodaj na začetni zaslon«.", installBtn:"Namesti", hide:"Skrij", notConfigured:"Aplikacija še ni povezana z bazo. Medtem lahko preizkusiš preizkusni način.", resetPin:"Ponastavi PIN igralca", newPin:"Nov PIN", player:"Igralec", pinReset:"PIN spremenjen. Sporoči igralcu nov PIN.", organiser:"Organizator"
 },
 de:{
   tag:"Offene Matchplay-Leiter · Saison {s}", regTitle:"Bei der Leiter anmelden",
@@ -399,7 +399,7 @@ de:{
   meBusyTip:"Du hast bereits eine offene Forderung", busyTip:"Dieser Spieler ist beschäftigt",
   pmTitle:"Punktematch gegen {n}",
   pmText:(pos,w,l)=>`Dies ist ein Punktematch gegen den Spieler auf Platz ${pos}. Die Leiter ändert sich nicht. Wenn du gewinnst, bekommst du ${w} ${w===1?"Punkt":"Punkte"}; gewinnt er, bekommt er ${l}. Er kann ohne Nachteil ablehnen.`,
-  sendInvite:"Einladung senden", inviteSent:"Einladung zum Punktematch gesendet.", pmBtn:"Punktematch +{w}",
+  sendInvite:"Einladung senden", inviteSent:"Einladung zum Punktematch gesendet.", pmBtn:"Punktematch +{w}", holes:"Löcher", holesN:"{n} Löcher", holesNote:"Wähle Matchplay über 9 oder 18 Löcher. Dein Gegner sieht das, bevor er annimmt.",
   you:"Du", inRange:"In Reichweite · Sieg {p} Pkt.", pts:"{p} Pkt.", place:"Platz {pos}",
   challenger:"Herausforderer", defender:"Verteidiger",
   stPending:"Wartet auf Annahme", stAccepted:"Termin vereinbaren und spielen", stReported:"Wartet auf Bestätigung des Ergebnisses", pointsMatch:"Punktematch",
@@ -424,7 +424,7 @@ de:{
   sample:" (Beispiel)", rulesTitle:"Regeln der Smash Golf Leiter",
   rules:[
     "Der Wettbewerb ist offen für alle aktiven Golfer und läuft die ganze Saison. Neue Spieler steigen unten auf der Leiter ein.",
-    "Gespielt wird Matchplay über 18 Löcher. Platz und Termin vereinbarst du mit deinem Gegner. Bei Gleichstand wird weitergespielt, bis ein Loch gewonnen ist.",
+    "Gespielt wird Matchplay über 9 oder 18 Löcher; der Herausforderer wählt beim Senden der Forderung. Platz und Termin vereinbarst du mit deinem Gegner. Bei Gleichstand wird weitergespielt, bis ein Loch gewonnen ist.",
     "Eine Leiter-Forderung, die Plätze verändern kann, geht nur an Spieler, die ein oder zwei Plätze über dir stehen.",
     "Jeder Spieler kann nur ein offenes Match gleichzeitig haben. Wer bereits im Match ist oder eine offene Forderung hat, kann nicht herausgefordert werden.",
     "Der geforderte Spieler muss innerhalb von {a} Tagen annehmen. Ablehnen gilt als Aufgabe. Ohne Antwort in der Frist kann der Herausforderer einen kampflosen Sieg beanspruchen.",
@@ -434,7 +434,7 @@ de:{
     "Du kannst jeden anderen Spieler, über oder unter dir, zu einem Punktematch einladen. Es bringt Punkte, ändert aber die Leiter nicht, und der Eingeladene kann ohne Nachteil ablehnen.",
     "Gewinnt der Herausforderer, übernimmt er den Platz des Verlierers. Der Verlierer und alle Spieler dazwischen rücken einen Platz nach unten. Gewinnt der Verteidiger, bleibt die Leiter gleich.",
     "Der Organisator kann eine strittige Forderung annullieren. Ein Spieler kann jederzeit aussteigen und beginnt bei erneuter Anmeldung unten."],
-  sc_x19:"Am 19. Loch", sc_x20:"Am 20. Loch", sc_x21:"Am 21. Loch", sc_conceded:"Aufgegeben", sc_walkover:"Kampflos", tabJoin:"Neuer Spieler", tabSignIn:"Ich bin schon dabei", fPin:"PIN (4 Ziffern)", pinNote:"Wähle eine 4-stellige PIN. Du meldest dich auf jedem Handy mit Name und PIN an.", signInIntro:"Wähle deinen Namen und gib deine PIN ein.", signInBtn:"Einloggen", pickName:"Wähle deinen Namen", wrongPin:"Name oder PIN ist falsch.", badPin:"Die PIN muss 4 bis 8 Ziffern haben.", nameTaken:"Dieser Name steht schon auf der Leiter. Wenn du das bist, logge dich stattdessen ein.", signOut:"Abmelden", signedOut:"Abgemeldet.", welcomeBack:"Willkommen zurück!", forgotPin:"PIN vergessen? Der Organisator kann sie zurücksetzen.", installTitle:"Smash Golf aufs Handy installieren", installIos:"iPhone: Teilen-Taste tippen, dann „Zum Home-Bildschirm“.", installAndroid:"Android: Browsermenü ⋮ öffnen und „App installieren“ oder „Zum Startbildschirm hinzufügen“ tippen.", installBtn:"Installieren", hide:"Ausblenden", notConfigured:"Die App ist noch nicht mit ihrer Datenbank verbunden. Probiere solange den Testmodus aus.", resetPin:"PIN eines Spielers zurücksetzen", newPin:"Neue PIN", player:"Spieler", pinReset:"PIN geändert. Teile dem Spieler die neue PIN mit.", organiser:"Organisator"
+  sc_x10:"Am 10. Loch", sc_x11:"Am 11. Loch", sc_x12:"Am 12. Loch", sc_x19:"Am 19. Loch", sc_x20:"Am 20. Loch", sc_x21:"Am 21. Loch", sc_conceded:"Aufgegeben", sc_walkover:"Kampflos", tabJoin:"Neuer Spieler", tabSignIn:"Ich bin schon dabei", fPin:"PIN (4 Ziffern)", pinNote:"Wähle eine 4-stellige PIN. Du meldest dich auf jedem Handy mit Name und PIN an.", signInIntro:"Wähle deinen Namen und gib deine PIN ein.", signInBtn:"Einloggen", pickName:"Wähle deinen Namen", wrongPin:"Name oder PIN ist falsch.", badPin:"Die PIN muss 4 bis 8 Ziffern haben.", nameTaken:"Dieser Name steht schon auf der Leiter. Wenn du das bist, logge dich stattdessen ein.", signOut:"Abmelden", signedOut:"Abgemeldet.", welcomeBack:"Willkommen zurück!", forgotPin:"PIN vergessen? Der Organisator kann sie zurücksetzen.", installTitle:"Smash Golf aufs Handy installieren", installIos:"iPhone: Teilen-Taste tippen, dann „Zum Home-Bildschirm“.", installAndroid:"Android: Browsermenü ⋮ öffnen und „App installieren“ oder „Zum Startbildschirm hinzufügen“ tippen.", installBtn:"Installieren", hide:"Ausblenden", notConfigured:"Die App ist noch nicht mit ihrer Datenbank verbunden. Probiere solange den Testmodus aus.", resetPin:"PIN eines Spielers zurücksetzen", newPin:"Neue PIN", player:"Spieler", pinReset:"PIN geändert. Teile dem Spieler die neue PIN mit.", organiser:"Organisator"
 },
 it:{
   tag:"Classifica matchplay aperta · Stagione {s}", regTitle:"Iscriviti alla classifica",
@@ -467,7 +467,7 @@ it:{
   meBusyTip:"Hai già una sfida aperta", busyTip:"Questo giocatore è impegnato",
   pmTitle:"Match a punti contro {n}",
   pmText:(pos,w,l)=>`Questo è un match a punti contro il giocatore al ${pos} posto. La classifica non cambia. Se vinci ottieni ${w} ${w===1?"punto":"punti"}; se vince lui, ne ottiene ${l}. Può rifiutare senza penalità.`,
-  sendInvite:"Invia invito", inviteSent:"Invito al match a punti inviato.", pmBtn:"Match a punti +{w}",
+  sendInvite:"Invia invito", inviteSent:"Invito al match a punti inviato.", pmBtn:"Match a punti +{w}", holes:"Buche", holesN:"{n} buche", holesNote:"Scegli un matchplay su 9 o 18 buche. L'avversario lo vede prima di accettare.",
   you:"Tu", inRange:"Sfidabile · vittoria {p} pt", pts:"{p} pt", place:"{pos} posto",
   challenger:"Sfidante", defender:"Sfidato",
   stPending:"In attesa di accettazione", stAccepted:"Accordatevi e giocate", stReported:"In attesa di conferma del risultato", pointsMatch:"Match a punti",
@@ -492,7 +492,7 @@ it:{
   sample:" (esempio)", rulesTitle:"Regole della classifica Smash Golf",
   rules:[
     "La competizione è aperta a tutti i golfisti attivi e dura tutta la stagione. I nuovi giocatori entrano in fondo alla classifica.",
-    "Si gioca matchplay su 18 buche. Campo e orario si concordano con l'avversario. In caso di parità si prosegue finché una buca non viene vinta.",
+    "Si gioca matchplay su 9 o 18 buche; lo sfidante sceglie quando invia la sfida. Campo e orario si concordano con l'avversario. In caso di parità si prosegue finché una buca non viene vinta.",
     "Una sfida di classifica, che può cambiare le posizioni, può essere lanciata solo a un giocatore una o due posizioni sopra di te.",
     "Ogni giocatore può avere un solo match aperto alla volta. Chi è già in un match o ha una sfida aperta non può essere sfidato.",
     "Lo sfidato deve accettare entro {a} giorni. Rifiutare equivale a concedere. Senza risposta entro il termine, lo sfidante può richiedere la vittoria a tavolino.",
@@ -502,7 +502,7 @@ it:{
     "Puoi invitare qualsiasi altro giocatore, sopra o sotto di te, a un match a punti. Dà punti ma non cambia la classifica, e l'invitato può rifiutare senza penalità.",
     "Se vince lo sfidante, prende il posto dello sconfitto. Lo sconfitto e tutti i giocatori in mezzo scendono di una posizione. Se vince lo sfidato, la classifica non cambia.",
     "L'organizzatore può annullare una sfida contestata. Un giocatore può ritirarsi in qualsiasi momento e, se si iscrive di nuovo, riparte dal fondo."],
-  sc_x19:"Alla 19ª buca", sc_x20:"Alla 20ª buca", sc_x21:"Alla 21ª buca", sc_conceded:"Concesso", sc_walkover:"A tavolino", tabJoin:"Nuovo giocatore", tabSignIn:"Sono già iscritto", fPin:"PIN (4 cifre)", pinNote:"Scegli un PIN di 4 cifre. Accedi con nome e PIN da qualsiasi telefono.", signInIntro:"Scegli il tuo nome e inserisci il PIN.", signInBtn:"Entra", pickName:"Scegli il tuo nome", wrongPin:"Nome o PIN errato.", badPin:"Il PIN deve avere da 4 a 8 cifre.", nameTaken:"Questo nome è già in classifica. Se sei tu, accedi.", signOut:"Esci", signedOut:"Disconnesso.", welcomeBack:"Bentornato!", forgotPin:"PIN dimenticato? L'organizzatore può reimpostarlo.", installTitle:"Installa Smash Golf sul telefono", installIos:"iPhone: tocca il pulsante Condividi, poi “Aggiungi alla schermata Home”.", installAndroid:"Android: apri il menu del browser ⋮ e tocca “Installa app” o “Aggiungi a schermata Home”.", installBtn:"Installa", hide:"Nascondi", notConfigured:"L'app non è ancora collegata al database. Nel frattempo puoi provare la modalità prova.", resetPin:"Reimposta il PIN di un giocatore", newPin:"Nuovo PIN", player:"Giocatore", pinReset:"PIN cambiato. Comunica al giocatore il nuovo PIN.", organiser:"Organizzatore"
+  sc_x10:"Alla 10ª buca", sc_x11:"All'11ª buca", sc_x12:"Alla 12ª buca", sc_x19:"Alla 19ª buca", sc_x20:"Alla 20ª buca", sc_x21:"Alla 21ª buca", sc_conceded:"Concesso", sc_walkover:"A tavolino", tabJoin:"Nuovo giocatore", tabSignIn:"Sono già iscritto", fPin:"PIN (4 cifre)", pinNote:"Scegli un PIN di 4 cifre. Accedi con nome e PIN da qualsiasi telefono.", signInIntro:"Scegli il tuo nome e inserisci il PIN.", signInBtn:"Entra", pickName:"Scegli il tuo nome", wrongPin:"Nome o PIN errato.", badPin:"Il PIN deve avere da 4 a 8 cifre.", nameTaken:"Questo nome è già in classifica. Se sei tu, accedi.", signOut:"Esci", signedOut:"Disconnesso.", welcomeBack:"Bentornato!", forgotPin:"PIN dimenticato? L'organizzatore può reimpostarlo.", installTitle:"Installa Smash Golf sul telefono", installIos:"iPhone: tocca il pulsante Condividi, poi “Aggiungi alla schermata Home”.", installAndroid:"Android: apri il menu del browser ⋮ e tocca “Installa app” o “Aggiungi a schermata Home”.", installBtn:"Installa", hide:"Nascondi", notConfigured:"L'app non è ancora collegata al database. Nel frattempo puoi provare la modalità prova.", resetPin:"Reimposta il PIN di un giocatore", newPin:"Nuovo PIN", player:"Giocatore", pinReset:"PIN cambiato. Comunica al giocatore il nuovo PIN.", organiser:"Organizzatore"
 }};
 // Match play rules supplied by the organiser (Slovenian original, translated).
 const MP={
@@ -574,7 +574,14 @@ document.getElementById("langs").addEventListener("click",e=>{
 const SEASON = "2027";
 const OPEN = ["pending","accepted","reported"];
 const ACCEPT_DAYS = 7, PLAY_DAYS = 21;
-const SCORES = ["1 up","2 up","2&1","3&1","3&2","4&2","4&3","5&3","5&4","6&4","6&5","7&5","7&6","8&6","8&7","9&7","9&8","10&8","x19","x20","x21","conceded"];
+// Every valid final matchplay score for a 9- or 18-hole match: "1 up", "2 up", then "m&r" (m up with r to play,
+// decided the moment m > r, so m is r+1 or r+2 and at most the holes already played), then extra holes, then a concession.
+function scoresFor(n){
+  const out=["1 up","2 up"];
+  for(let m=2;m<=n;m++) for(const r of [m-2,m-1]) if(r>=1 && m<=n-r) out.push(m+"&"+r);
+  return out.concat([1,2,3].map(k=>"x"+(n+k)), "conceded");
+}
+function holesOf(c){ return c && c.holes===9 ? 9 : 18; }
 const DAY = 86400000;
 
 // ---------- state ----------
@@ -737,11 +744,11 @@ async function run(fn, okMsg){
 }
 
 // ---------- actions ----------
-async function createChallenge(tId){
+async function createChallenge(tId, holes){
   const el=eligibility(S.me,tId);
   if(!el.ok) throw new Error(t("cantChallenge"));
   const id=rid();
-  await B().saveChallenge(id,{id, challenger:S.me, defender:tId, chPos:posOf(S.me), dePos:posOf(tId), kind:el.kind, status:"pending", createdAt:Date.now()});
+  await B().saveChallenge(id,{id, challenger:S.me, defender:tId, chPos:posOf(S.me), dePos:posOf(tId), kind:el.kind, holes:holes===9?9:18, status:"pending", createdAt:Date.now()});
 }
 async function setStatus(c, patch){ await B().saveChallenge(c.id, Object.assign({}, c, patch)); }
 async function accept(c){
@@ -778,7 +785,7 @@ function confirmModal(title, text, label, fn, cls){
 function reportModal(c){
   const opp = c.challenger===S.me ? c.defender : c.challenger;
   const win = h("select",{id:"m-win"}, h("option",{value:S.me,text:t("iWon")}), h("option",{value:opp,text:t("oppWon",{n:pname(opp)})}));
-  const sc = h("select",{id:"m-score"}, SCORES.map(s=>h("option",{value:s,text:scoreLabel(s)})));
+  const sc = h("select",{id:"m-score"}, scoresFor(holesOf(c)).map(s=>h("option",{value:s,text:scoreLabel(s)})));
   const body=h("div",{class:"form"},
     h("div",{class:"field"}, h("label",{for:"m-win",text:t("winner")}), win),
     h("div",{class:"field"}, h("label",{for:"m-score",text:t("result")}), sc),
@@ -786,6 +793,18 @@ function reportModal(c){
   modal(t("enterResultTitle"), body, [
     h("button",{class:"btn primary",onclick:async e=>{ e.target.disabled=true;
       await run(()=>setStatus(c,{status:"reported", winner:win.value, score:sc.value, reportedBy:S.me, reportedAt:Date.now()}),t("resultSent")); closeModal(); }, text:t("sendResult")}),
+    h("button",{class:"btn ghost",onclick:closeModal,text:t("cancel")})
+  ]);
+}
+function challengeModal(tId, title, text, label, okMsg, cls){
+  const sel=h("select",{id:"m-holes"}, [18,9].map(n=>h("option",{value:n,text:t("holesN",{n})})));
+  const body=h("div",{class:"form"},
+    h("p",{style:"grid-column:1/-1;margin:0",text}),
+    h("div",{class:"field"}, h("label",{for:"m-holes",text:t("holes")}), sel),
+    h("p",{class:"small muted",style:"grid-column:1/-1;margin:0",text:t("holesNote")}));
+  modal(title, body, [
+    h("button",{class:"btn "+cls,onclick:async e=>{ e.target.disabled=true;
+      await run(()=>createChallenge(tId, Number(sel.value)),okMsg); closeModal(); }, text:label}),
     h("button",{class:"btn ghost",onclick:closeModal,text:t("cancel")})
   ]);
 }
@@ -871,15 +890,15 @@ function vLadder(){
     const el = S.me && !isMe ? eligibility(S.me,id) : {ok:false};
     const busy = openOf(id).some(c=>c.status!=="pending") ? t("inMatch") : openOf(id).length ? t("hasOpen") : null;
     let action=null;
-    if(el.ok && S.canWrite) action=h("button",{class:"btn flag",onclick:()=>confirmModal(t("challengeTitle",{n:pname(id)}),
+    if(el.ok && S.canWrite) action=h("button",{class:"btn flag",onclick:()=>challengeModal(id, t("challengeTitle",{n:pname(id)}),
         t("challengeText",{pos:ord(i+1),d:ACCEPT_DAYS}),
-        t("sendChallenge"), ()=>run(()=>createChallenge(id),t("challengeSent")),"flag"), text:t("challengeBtn")});
+        t("sendChallenge"), t("challengeSent"),"flag"), text:t("challengeBtn")});
     else if(el.inRange) action=h("button",{class:"btn",disabled:true,title:el.reason==="meBusy"?t("meBusyTip"):t("busyTip"),text:t("challengeBtn")});
     if(el.ok && el.down && S.canWrite){
       const win=pointsFor(posOf(S.me),i+1), lose=pointsFor(i+1,posOf(S.me));
-      action=h("button",{class:"btn ghost",onclick:()=>confirmModal(t("pmTitle",{n:pname(id)}),
+      action=h("button",{class:"btn ghost",onclick:()=>challengeModal(id, t("pmTitle",{n:pname(id)}),
         t("pmText")(ord(i+1),win,lose),
-        t("sendInvite"), ()=>run(()=>createChallenge(id),t("inviteSent")),"primary"), text:t("pmBtn",{w:win})});
+        t("sendInvite"), t("inviteSent"),"primary"), text:t("pmBtn",{w:win})});
     }
     return h("div",{class:"rung"+(isMe?" me":"")+(el.inRange?" reach":"")},
       h("div",{class:"n",text:i+1}),
@@ -904,6 +923,7 @@ function duelCard(c, withActions){
   const side=(id,pos,lab,r)=>h("div",{class:"side"+(r?" r":"")}, h("span",{class:"small muted",text:lab+(pos?" · "+t("place",{pos:ord(pos)}):"")}), h("span",{class:"nm",text:pname(id)}));
   const L={pending:[t("stPending"),"busy"],accepted:[t("stAccepted"),"ok"],reported:[t("stReported"),"busy"]}[c.status]||["",""];
   const line=[h("span",{class:"chip "+L[1],text:L[0]})];
+  line.unshift(h("span",{class:"chip mut",text:t("holesN",{n:holesOf(c)})}));
   if(kindOf(c)==="points") line.unshift(h("span",{class:"chip mut",text:t("pointsMatch")}));
   const acts=[];
   const oppId = c.challenger===me ? c.defender : c.challenger;
@@ -973,6 +993,7 @@ function vResults(){
         h("div",{style:"font-weight:600",text:t("beat",{w:pname(c.winner),l:pname(loser)})}),
         h("div",{class:"meta"},
           h("span",{text:fmtDate(c.closedAt)}),
+          h("span",{text:t("holesN",{n:holesOf(c)})}),
           kindOf(c)==="points" ? h("span",{text:t("pmUnchanged")}) : chWon ? h("span",{class:"move-up",text:t("movedUp",{a:ord(c.chPos),b:ord(c.dePos)})}) : h("span",{text:t("defKeeps")}),
           how?h("span",{text:how}):null)),
       h("div",{class:"score"}, h("div",{text:scoreLabel(c.score)}), h("div",{class:"small",text:"+"+t("pts",{p:ptsOf(c)})})));
@@ -1020,7 +1041,7 @@ function loadDemo(){
   const now=Date.now();
   const C={
     c1:{id:"c1",challenger:"demo2",defender:"demo1",chPos:3,dePos:2,status:"done",winner:"demo1",score:"3&2",how:"played",points:3,createdAt:now-20*DAY,closedAt:now-12*DAY},
-    c2:{id:"c2",challenger:"demo5",defender:"demo3",chPos:6,dePos:4,status:"done",winner:"demo5",score:"1 up",how:"played",points:5,createdAt:now-14*DAY,closedAt:now-6*DAY},
+    c2:{id:"c2",challenger:"demo5",defender:"demo3",chPos:6,dePos:4,status:"done",winner:"demo5",score:"1 up",holes:9,how:"played",points:5,createdAt:now-14*DAY,closedAt:now-6*DAY},
     c3:{id:"c3",challenger:"demo6",defender:"demo5",chPos:7,dePos:6,status:"accepted",createdAt:now-3*DAY,acceptedAt:now-2*DAY},
     c4:{id:"c4",challenger:"demo4",defender:"demo2",chPos:5,dePos:3,status:"pending",createdAt:now-1*DAY}
   };
