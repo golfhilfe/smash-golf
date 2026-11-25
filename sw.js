@@ -1,5 +1,5 @@
 // Smash Golf service worker: app shell offline, always fresh when online. Data calls are never cached.
-const CACHE = "smash-golf-v6";
+const CACHE = "smash-golf-v7";
 const SHELL = ["./", "index.html", "config.js", "clubs.js", "club-picker.js", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/logo.svg", "icons/icon.svg"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
