@@ -1,6 +1,6 @@
 -- Smash Golf: anti-cheat hardening (run once, after supabase-setup.sql and 002-pin-recovery.sql).
 -- 1. The server now decides every match step itself: who may accept, decline, report, confirm or claim a walkover,
---    the ladder/points match type, the positions, the deadlines and the points. Values sent by the app are ignored.
+--    the ladder/points match type (up to 3 places above = ladder, up to 2 below = points, nothing further), the positions, the deadlines and the points. Values sent by the app are ignored.
 -- 2. PIN guessing is limited: 5 wrong PINs in an hour lock that player's sign-in for 1 hour.
 -- 3. Phone/contact details are shown only to the player themself, their current opponent and the organiser.
 -- 4. Handicaps are frozen when a match is accepted, so changing your handicap afterwards gives no extra strokes.
@@ -150,7 +150,10 @@ begin
     if exists(select 1 from public.sg_challenges where data->>'status' in ('pending','accepted','reported')
                 and (data->>'challenger' in (ch,de) or data->>'defender' in (ch,de))) then
       raise exception 'busy' using errcode = '42501'; end if;
-    kind := case when ci - di between 1 and 2 then 'ladder' else 'points' end;
+    -- opponents: up to 3 places above (ladder challenge) or up to 2 places below (points match); nobody further away
+    if ci - di between 1 and 3 then kind := 'ladder';
+    elsif di - ci between 1 and 2 then kind := 'points';
+    else raise exception 'range' using errcode = '42501'; end if;
     nd := jsonb_build_object('challenger',ch,'defender',de,'chPos',ci,'dePos',di,'kind',kind,'status','pending','createdAt',nowms);
   else
     ch := old->>'challenger'; de := old->>'defender'; st := old->>'status'; kind := coalesce(old->>'kind','ladder');

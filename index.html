@@ -701,7 +701,7 @@ async function rpc(fn, args, token){
   let body=null; try{ body = txt?JSON.parse(txt):null; }catch(e){}
   if(!res.ok){
     const m = body && body.message;
-    const map = {auth:"wrongPin", locked:"pinLocked", busy:"cantChallenge", taken:"nameTaken", pin:"badPin", name:"enterName", nomatch:"noMatch"};
+    const map = {auth:"wrongPin", locked:"pinLocked", busy:"cantChallenge", range:"cantChallenge", taken:"nameTaken", pin:"badPin", name:"enterName", nomatch:"noMatch"};
     if(m==="auth" && SESSION && fn!=="sg_login"){ /* stale PIN */ setSession(null); SESSION=null; S.liveMe=null; S.me=null; }
     throw new ApiError(m||"error", map[m] ? t(map[m]) : (res.status>=500 ? t("unavailable") : t("genericErr")));
   }
